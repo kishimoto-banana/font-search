@@ -1,12 +1,16 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import React, { useState, useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import ReactCrop, {
   centerCrop,
   Crop,
-  PixelCrop,
   makeAspectCrop,
+  PixelCrop,
 } from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css'
+import ImageUploader from '../components/imageUploader'
+import { canvasPreview } from '../lib/canvasPreview'
+import { useDebounceEffect } from '../lib/useDebounceEffect'
 
 const centerAspectCrop = (
   mediaWidth: number,
@@ -34,7 +38,7 @@ const Home: NextPage = () => {
   const imgRef = useRef<HTMLImageElement>(null)
   const [crop, setCrop] = useState<Crop>()
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
-  const [aspect, setAspect] = useState<number | undefined>(16 / 9)
+  const [aspect, setAspect] = useState<number | undefined>(undefined)
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -54,6 +58,21 @@ const Home: NextPage = () => {
     }
   }
 
+  useDebounceEffect(
+    async () => {
+      if (
+        completedCrop?.width &&
+        completedCrop.height &&
+        imgRef.current &&
+        previewCanvasRef.current
+      ) {
+        canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop)
+      }
+    },
+    100,
+    [completedCrop]
+  )
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -61,20 +80,32 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-xl font-bold">ちょっとまって</h1>
-        <div>
-          <input type="file" accept="image/*" onChange={onSelectFile} />
-        </div>
+        <ImageUploader onChange={onSelectFile} />
+
         {Boolean(imgSrc) && (
           <ReactCrop
             crop={crop}
             onChange={(_, percentCrop) => setCrop(percentCrop)}
             onComplete={(c) => setCompletedCrop(c)}
-            aspect={aspect}
+            // aspect={aspect}
           >
             <img ref={imgRef} alt="Crop me" src={imgSrc} onLoad={onImageLoad} />
           </ReactCrop>
         )}
+        <div>
+          {Boolean(completedCrop) && (
+            <canvas
+              ref={previewCanvasRef}
+              style={{
+                border: '1px solid black',
+                objectFit: 'contain',
+                width: completedCrop?.width,
+                height: completedCrop?.height,
+              }}
+            />
+            // <CropResult ref={previewCanvasRef} crop={completedCrop} />
+          )}
+        </div>
       </main>
     </div>
   )
