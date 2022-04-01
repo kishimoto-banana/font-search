@@ -5,9 +5,11 @@ import React, { useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ImageUploader from '../components/imageUploader'
 
+const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
+
 const Home: NextPage = () => {
   const [image, setImage] = useState('')
-  const [cropData, setCropData] = useState('#')
+  const [filename, setFileName] = useState('')
   const [cropper, setCropper] = useState<any>()
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,20 +19,32 @@ const Home: NextPage = () => {
         setImage(reader.result?.toString() || '')
       })
       reader.readAsDataURL(e.target.files[0])
+      setFileName(e.target.files[0].name)
     }
   }
 
-  // const getCropData = () => {
-  //   if (typeof cropper !== 'undefined') {
-  //     setCropData(cropper.getCroppedCanvas().toDataURL())
-  //   }
-  // }
+  const getCropData = () => {
+    // console.log(cropper.getCroppedCanvas().toDataURL())
+    // typeは検討
+    // https://developer.mozilla.org/ja/docs/Web/API/HTMLCanvasElement/toDataURL
 
-  // const onCrop = () => {
-  //   const imageElement: any = cropperRef?.current
-  //   const cropper: any = imageElement?.cropper
-  //   console.log(cropper.getCroppedCanvas().toDataURL())
-  // }
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    const body = JSON.stringify({
+      name: filename,
+      content: cropper.getCroppedCanvas().toDataURL(),
+    })
+
+    fetch(fontSearchApiEndpoint, {
+      method: 'POST',
+      headers,
+      body,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.name, data.content)
+      })
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -68,6 +82,7 @@ const Home: NextPage = () => {
               className="img-preview"
               style={{ width: '100%', height: 400 }}
             />
+            <button onClick={getCropData}>そうしん！</button>
           </div>
         )}
       </main>
