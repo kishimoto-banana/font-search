@@ -6,6 +6,7 @@ import { Cropper } from 'react-cropper'
 import ImageUploader from '../components/imageUploader'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
+const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
 
 const Home: NextPage = () => {
   const [image, setImage] = useState('')
@@ -43,6 +44,39 @@ const Home: NextPage = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data.name, data.content)
+      })
+  }
+
+  const getText = () => {
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    const body = JSON.stringify({
+      requests: [
+        {
+          image: {
+            content: cropper
+              .getCroppedCanvas()
+              .toDataURL()
+              .replace(/^data:image\/(png|jpg);base64,/, ''),
+          },
+          features: [{ type: 'TEXT_DETECTION' }],
+        },
+      ],
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('ocr api skip')
+      return
+    }
+
+    fetch(visionApiEndpoint, {
+      method: 'POST',
+      headers,
+      body,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
       })
   }
 
@@ -85,6 +119,10 @@ const Home: NextPage = () => {
             <button onClick={getCropData}>そうしん！</button>
           </div>
         )}
+
+        <button style={{ padding: 10 }} onClick={getText}>
+          OCR
+        </button>
       </main>
     </div>
   )
