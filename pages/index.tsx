@@ -12,6 +12,7 @@ const Home: NextPage = () => {
   const [image, setImage] = useState('')
   const [filename, setFileName] = useState('')
   const [cropper, setCropper] = useState<any>()
+  const [text, setText] = useState('')
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -58,7 +59,7 @@ const Home: NextPage = () => {
       ],
     })
 
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV === 'development') {
       const ocr = fetch(visionApiEndpoint, {
         method: 'POST',
         headers,
@@ -71,6 +72,8 @@ const Home: NextPage = () => {
       .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then((data) => {
         console.log(data)
+        const detectedText = data[1].responses[0].fullTextAnnotation.text
+        setText(detectedText)
       })
   }
 
@@ -147,9 +150,7 @@ const Home: NextPage = () => {
           </div>
         )}
 
-        <button style={{ padding: 10 }} onClick={getText}>
-          OCR
-        </button>
+        {Boolean(text) && <p>{text}</p>}
       </main>
     </div>
   )
