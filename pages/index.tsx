@@ -31,19 +31,43 @@ const Home: NextPage = () => {
 
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
-    const body = JSON.stringify({
-      name: filename,
-      content: cropper.getCroppedCanvas().toDataURL(),
-    })
 
-    fetch(fontSearchApiEndpoint, {
+    const encodedImage = cropper
+      .getCroppedCanvas()
+      .toDataURL()
+      .replace(/^data:image\/(png|jpg);base64,/, '')
+
+    const fontSearchBody = JSON.stringify({
+      name: filename,
+      content: encodedImage,
+    })
+    const fontSearch = fetch(fontSearchApiEndpoint, {
       method: 'POST',
       headers,
-      body,
+      body: fontSearchBody,
     })
-      .then((res) => res.json())
+
+    const ocrBody = JSON.stringify({
+      requests: [
+        {
+          image: { content: encodedImage },
+          features: [{ type: 'TEXT_DETECTION' }],
+        },
+      ],
+    })
+    const ocr = fetch(visionApiEndpoint, {
+      method: 'POST',
+      headers,
+      body: ocrBody,
+    })
+
+    const tasks =
+      process.env.NODE_ENV === 'development' ? [fontSearch] : [fontSearch, ocr]
+
+    Promise.all(tasks)
+      .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then((data) => {
-        console.log(data.name, data.content)
+        console.log(data)
       })
   }
 
