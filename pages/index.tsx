@@ -37,6 +37,7 @@ const Home: NextPage = () => {
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
 
+    const tasks = []
     const fontSearchBody = JSON.stringify({
       name: filename,
       content: encodedImage,
@@ -46,6 +47,7 @@ const Home: NextPage = () => {
       headers,
       body: fontSearchBody,
     })
+    tasks.push(fontSearch)
 
     const ocrBody = JSON.stringify({
       requests: [
@@ -55,14 +57,15 @@ const Home: NextPage = () => {
         },
       ],
     })
-    const ocr = fetch(visionApiEndpoint, {
-      method: 'POST',
-      headers,
-      body: ocrBody,
-    })
 
-    const tasks =
-      process.env.NODE_ENV === 'development' ? [fontSearch] : [fontSearch, ocr]
+    if (process.env.NODE_ENV !== 'development') {
+      const ocr = fetch(visionApiEndpoint, {
+        method: 'POST',
+        headers,
+        body: ocrBody,
+      })
+      tasks.push(ocr)
+    }
 
     Promise.all(tasks)
       .then((responses) => Promise.all(responses.map((res) => res.json())))
