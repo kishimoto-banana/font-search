@@ -10,7 +10,6 @@ const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${
 
 const Home: NextPage = () => {
   const [image, setImage] = useState('')
-  const [filename, setFileName] = useState('')
   const [cropper, setCropper] = useState<any>()
   const [text, setText] = useState('')
 
@@ -21,7 +20,6 @@ const Home: NextPage = () => {
         setImage(reader.result?.toString() || '')
       })
       reader.readAsDataURL(e.target.files[0])
-      setFileName(e.target.files[0].name)
     }
   }
 
@@ -40,7 +38,6 @@ const Home: NextPage = () => {
 
     const tasks = []
     const fontSearchBody = JSON.stringify({
-      name: filename,
       content: encodedImage,
     })
     const fontSearch = fetch(fontSearchApiEndpoint, {
@@ -59,7 +56,7 @@ const Home: NextPage = () => {
       ],
     })
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV !== 'development') {
       const ocr = fetch(visionApiEndpoint, {
         method: 'POST',
         headers,
@@ -72,8 +69,10 @@ const Home: NextPage = () => {
       .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then((data) => {
         console.log(data)
-        const detectedText = data[1].responses[0].fullTextAnnotation.text
-        setText(detectedText)
+        if (data.length > 1) {
+          const detectedText = data[1].responses[0].fullTextAnnotation.text
+          setText(detectedText)
+        }
       })
   }
 
