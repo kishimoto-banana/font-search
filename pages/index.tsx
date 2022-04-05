@@ -271,35 +271,27 @@ const Home: NextPage = () => {
 
         {Boolean(fonts) &&
           fonts.map((font, index) => (
-            <>
-              {/* <h2
-                key={index}
-                className={`text-5xl ${fontWeightClassName(
-                  font.fontWeight
-                )} ${fontClassName(font.fontName)}`}
-              >
-                ロゴデザイン
-              </h2> */}
-
-              <div className="my-1 max-w-md rounded-lg bg-white py-4 px-8 shadow-lg">
-                <div>
-                  <p
-                    className={`text-gray-600" mt-2 text-5xl ${fontWeightClassName(
-                      font.fontWeight
-                    )} ${fontClassName(font.fontName)}`}
-                  >
-                    ロゴデザイン
-                  </p>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <p className="text-md font-normal text-indigo-500">
-                    {font.fontNameJa}{' '}
-                    {fontWeightClassName(font.fontWeight).replace('font-', '')}-
-                    {font.fontWeight}
-                  </p>
-                </div>
+            <div
+              key={index}
+              className="my-1 max-w-md rounded-lg bg-white py-4 px-8 shadow-lg"
+            >
+              <div>
+                <p
+                  className={`text-gray-600" mt-2 text-5xl ${fontWeightClassName(
+                    font.fontWeight
+                  )} ${fontClassName(font.fontName)}`}
+                >
+                  ロゴデザイン
+                </p>
               </div>
-            </>
+              <div className="mt-4 flex justify-end">
+                <p className="text-md font-normal text-indigo-500">
+                  {font.fontNameJa}{' '}
+                  {fontWeightClassName(font.fontWeight).replace('font-', '')}-
+                  {font.fontWeight}
+                </p>
+              </div>
+            </div>
           ))}
       </main>
     </div>
