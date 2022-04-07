@@ -50,6 +50,7 @@ module.exports = {
         shipporiantique: ['"Shippori Antique"'],
         morisawabizudgothic: ['"BIZ UDGothic"'],
         morisawabizudmincho: ['"BIZ UDMincho"'],
+        morisawabizudpmincho: ['"BIZ UDPMincho"'],
       },
     },
   },

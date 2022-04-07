@@ -1,12 +1,14 @@
 import 'cropperjs/dist/cropper.css'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ImageUploader from '../components/imageUploader'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
+
+const title = 'ふぉんとさーち（β）'
 
 const fontClassName = (fontName: string) => {
   switch (fontName) {
@@ -98,6 +100,8 @@ const fontClassName = (fontName: string) => {
       return 'font-morisawabizudgothic'
     case 'morisawabizudmincho':
       return 'font-morisawabizudmincho'
+    case 'morisawabizudpmincho':
+      return 'font-morisawabizudpmincho'
   }
 }
 
@@ -124,12 +128,37 @@ const fontWeightClassName = (fontWeight: number) => {
   }
 }
 
+const Loading = () => {
+  return (
+    <div className="flex justify-center">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+    </div>
+  )
+}
+
 const Home: NextPage = () => {
   const [image, setImage] = useState('')
   const [cropper, setCropper] = useState<any>()
   const [text, setText] = useState('')
   const [fonts, setFonts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [submitCount, setSubmitCount] = useState(0) // 送信されたときに useEffect走るように（countじゃくていいのだが…）
+  const firstRender = useRef(true)
 
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    if (!doneSubmit()) {
+      return
+    }
+    getCropData()
+  }, [submitCount])
+
+  const doneSubmit = () => {
+    return Boolean(submitCount)
+  }
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader()
@@ -140,13 +169,11 @@ const Home: NextPage = () => {
     }
   }
 
-  const getCropData = () => {
+  const getCropData = async () => {
     // console.log(cropper.getCroppedCanvas().toDataURL())
     // typeは検討
     // https://developer.mozilla.org/ja/docs/Web/API/HTMLCanvasElement/toDataURL
-
-    const headers = new Headers()
-    headers.append('Content-Type', 'application/json')
+    setLoading(true)
 
     const encodedImage = cropper
       .getCroppedCanvas()
@@ -154,16 +181,25 @@ const Home: NextPage = () => {
       .replace(/^data:image\/(png|jpg);base64,/, '')
 
     const tasks = []
+
+    const fontSearchHeaders = new Headers()
+    fontSearchHeaders.append('Content-Type', 'application/json')
+    fontSearchHeaders.append(
+      'x-api-key',
+      process.env.NEXT_PUBLIC_FONT_SEARCH_API_KEY
+    )
     const fontSearchBody = JSON.stringify({
       content: encodedImage,
     })
     const fontSearch = fetch(fontSearchApiEndpoint, {
       method: 'POST',
-      headers,
+      headers: fontSearchHeaders,
       body: fontSearchBody,
     })
     tasks.push(fontSearch)
 
+    const ocrHeaders = new Headers()
+    ocrHeaders.append('Content-Type', 'application/json')
     const ocrBody = JSON.stringify({
       requests: [
         {
@@ -176,7 +212,7 @@ const Home: NextPage = () => {
     if (process.env.NODE_ENV !== 'development') {
       const ocr = fetch(visionApiEndpoint, {
         method: 'POST',
-        headers,
+        headers: ocrHeaders,
         body: ocrBody,
       })
       tasks.push(ocr)
@@ -185,54 +221,21 @@ const Home: NextPage = () => {
     Promise.all(tasks)
       .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then((data) => {
-        console.log(data)
         setFonts(data[0].fonts)
         if (data.length > 1) {
           const detectedText = data[1].responses[0].fullTextAnnotation.text
           setText(detectedText)
         }
       })
-  }
-
-  const getText = () => {
-    const headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-    const body = JSON.stringify({
-      requests: [
-        {
-          image: {
-            content: cropper
-              .getCroppedCanvas()
-              .toDataURL()
-              .replace(/^data:image\/(png|jpg);base64,/, ''),
-          },
-          features: [{ type: 'TEXT_DETECTION' }],
-        },
-      ],
-    })
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('ocr api skip')
-      return
-    }
-
-    fetch(visionApiEndpoint, {
-      method: 'POST',
-      headers,
-      body,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
+      .finally(() => {
+        setLoading(false)
       })
   }
-
-  console.log(fonts)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>ふぉんとさーち（仮）</title>
+        <title>{title}</title>
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
@@ -241,7 +244,7 @@ const Home: NextPage = () => {
           <Cropper
             src={image}
             style={{ height: 400, width: '100%' }}
-            zoomTo={0.5}
+            zoomTo={0.1}
             initialAspectRatio={1}
             viewMode={1}
             minCropBoxHeight={10}
@@ -260,20 +263,23 @@ const Home: NextPage = () => {
 
         {Boolean(image) && (
           <div>
-            <h1>Preview</h1>
-            <div
-              className="img-preview"
-              style={{ width: '100%', height: 400 }}
-            />
-            <button onClick={getCropData}>そうしん！</button>
+            <button
+              className="mt-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+              onClick={() => setSubmitCount(submitCount + 1)}
+            >
+              そうしん！
+            </button>
           </div>
         )}
 
-        {Boolean(fonts) &&
+        {loading ? (
+          <Loading />
+        ) : (
+          Boolean(fonts) &&
           fonts.map((font, index) => (
             <div
               key={index}
-              className="my-1 max-w-md rounded-lg bg-white py-4 px-8 shadow-lg"
+              className="w-100 my-1 rounded-lg bg-white py-4 px-8 shadow-lg"
             >
               <div>
                 <p
@@ -281,7 +287,7 @@ const Home: NextPage = () => {
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
-                  ロゴデザイン
+                  {Boolean(text) ? text : 'ロゴデザイン'}
                 </p>
               </div>
               <div className="mt-4 flex justify-end">
@@ -292,7 +298,8 @@ const Home: NextPage = () => {
                 </p>
               </div>
             </div>
-          ))}
+          ))
+        )}
       </main>
     </div>
   )
