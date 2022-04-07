@@ -7,7 +7,7 @@ const ImageUploader: React.FC<Props> = ({ onChange }) => {
     <div>
       <label
         htmlFor="file"
-        className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+        className="cursor-pointer rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
       >
         画像を選択
       </label>
