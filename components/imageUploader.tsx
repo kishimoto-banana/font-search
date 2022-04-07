@@ -5,7 +5,19 @@ type Props = {
 const ImageUploader: React.FC<Props> = ({ onChange }) => {
   return (
     <div>
-      <input type="file" accept="image/*" onChange={onChange} />
+      <label
+        htmlFor="file"
+        className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+      >
+        画像を選択
+      </label>
+      <input
+        id="file"
+        className="hidden"
+        type="file"
+        accept="image/*"
+        onChange={onChange}
+      />
     </div>
   )
 }
