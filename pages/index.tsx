@@ -6,6 +6,8 @@ import { Cropper } from 'react-cropper'
 import ImageUploader from '../components/imageUploader'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
+// const fontSearchApiEndpoint =
+//   'https://1mt3pjzokj.execute-api.ap-northeast-1.amazonaws.com/prod/v1/fonts/'
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
 
 const title = 'ふぉんとさーち（β）'
@@ -130,9 +132,69 @@ const fontWeightClassName = (fontWeight: number) => {
 
 const Loading = () => {
   return (
-    <div className="flex justify-center">
-      <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+    <div className="height-0 absolute top-0 flex h-screen w-screen items-center justify-center bg-black bg-opacity-25">
+      <div className="flex justify-center space-x-2">
+        <div className="h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
+        <div className="animation-delay-100  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
+        <div className="animation-delay-200  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
+        <div className="animation-delay-300  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
+        <div className="animation-delay-400  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
+      </div>
     </div>
+  )
+}
+
+const Modal = ({ img, fontName, fontNameJa, fontWeight, setShowModal }) => {
+  return (
+    <>
+      <div className="fixed inset-0 z-50 flex animate-fade-in-up items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+        <div className="relative my-6 mx-auto w-auto max-w-3xl">
+          <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
+            <div className="border-blueGray-200 flex items-start justify-between rounded-t border-b border-solid p-5">
+              <h3 className="text-center text-2xl  text-indigo-500">
+                {' '}
+                {fontNameJa}{' '}
+                {fontWeightClassName(fontWeight).replace('font-', '')}-
+                {fontWeight}
+              </h3>
+              <button
+                type="button"
+                className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
+                onClick={() => setShowModal(false)}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div className="px-10 pb-5">
+              <img src={img} />
+              <>
+                <div>
+                  <p
+                    className={`mt-2 text-5xl ${fontWeightClassName(
+                      fontWeight
+                    )} ${fontClassName(fontName)}`}
+                  >
+                    ロゴデザイン
+                  </p>
+                </div>
+              </>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+    </>
   )
 }
 
@@ -144,6 +206,9 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [submitCount, setSubmitCount] = useState(0) // 送信されたときに useEffect走るように（countじゃくていいのだが…）
   const firstRender = useRef(true)
+  const [showModal, setShowModal] = useState(false)
+  const [croppedImage, setCroppedImage] = useState('')
+  const [selectedFont, setSelectedFont] = useState(null)
 
   useEffect(() => {
     if (firstRender.current) {
@@ -169,11 +234,12 @@ const Home: NextPage = () => {
     }
   }
 
-  const getCropData = async () => {
+  const getCropData = () => {
     // console.log(cropper.getCroppedCanvas().toDataURL())
     // typeは検討
     // https://developer.mozilla.org/ja/docs/Web/API/HTMLCanvasElement/toDataURL
     setLoading(true)
+    setCroppedImage(cropper.getCroppedCanvas().toDataURL())
 
     const encodedImage = cropper
       .getCroppedCanvas()
@@ -232,15 +298,32 @@ const Home: NextPage = () => {
       })
   }
 
+  const handleClick = (font) => {
+    setShowModal(true)
+    setSelectedFont(font)
+  }
+
+  console.log(selectedFont)
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
         <title>{title}</title>
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+      <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
         <div>
-          <ImageUploader onChange={onSelectFile} />
+          {!Boolean(image) && (
+            <>
+              <h1 className="pb-3 text-3xl">{title}</h1>
+              <h2 className="pb-10 text-lg">
+                似ている日本語フォントを探します
+              </h2>
+            </>
+          )}
+          <div className="mb-4">
+            <ImageUploader onChange={onSelectFile} />
+          </div>
           <Cropper
             src={image}
             style={{ height: 400, width: '100%' }}
@@ -277,13 +360,15 @@ const Home: NextPage = () => {
         ) : (
           Boolean(fonts) &&
           fonts.map((font, index) => (
-            <div
+            <button
               key={index}
-              className="w-100 my-1 rounded-lg bg-white py-4 px-8 shadow-lg"
+              className="w-100 my-1 animate-fade-in-up rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105"
+              // onClick={() => setShowModal(true)}
+              onClick={() => handleClick(font)}
             >
               <div>
                 <p
-                  className={`text-gray-600" mt-2 text-5xl ${fontWeightClassName(
+                  className={`mt-2 text-5xl ${fontWeightClassName(
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
@@ -297,8 +382,18 @@ const Home: NextPage = () => {
                   {font.fontWeight}
                 </p>
               </div>
-            </div>
+            </button>
           ))
+        )}
+
+        {showModal && (
+          <Modal
+            img={croppedImage}
+            fontName={selectedFont.fontName}
+            fontNameJa={selectedFont.fontNameJa}
+            fontWeight={selectedFont.fontWeight}
+            setShowModal={setShowModal}
+          />
         )}
       </main>
     </div>
