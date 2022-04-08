@@ -11,6 +11,7 @@ const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
 
 const title = 'ふぉんとさーち（β）'
+const maxChars = 25
 
 const fontClassName = (fontName: string) => {
   switch (fontName) {
@@ -288,9 +289,17 @@ const Home: NextPage = () => {
       .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then((data) => {
         setFonts(data[0].fonts)
-        if (data.length > 1) {
-          const detectedText = data[1].responses[0].fullTextAnnotation.text
-          setText(detectedText)
+        console.log(data[1])
+        if (data.length > 1 && 'fullTextAnnotation' in data[1].responses[0]) {
+          const detectedText =
+            data[1].responses[0].fullTextAnnotation.text.replace(/\r?\n/g, '')
+          const slicedText =
+            detectedText.length <= maxChars
+              ? detectedText
+              : detectedText.slice(0, maxChars)
+          setText(slicedText)
+        } else {
+          setText('')
         }
       })
       .finally(() => {
@@ -303,7 +312,7 @@ const Home: NextPage = () => {
     setSelectedFont(font)
   }
 
-  console.log(selectedFont)
+  console.log(text, text.length)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -372,7 +381,11 @@ const Home: NextPage = () => {
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
-                  {Boolean(text) ? text : 'ロゴデザイン'}
+                  {Boolean(text)
+                    ? text
+                    : process.env.NODE_ENV === 'development'
+                    ? 'ロゴデザイン'
+                    : '(・_・)'}
                 </p>
               </div>
               <div className="mt-4 flex justify-end">
