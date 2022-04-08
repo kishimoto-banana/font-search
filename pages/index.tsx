@@ -13,6 +13,7 @@ const visionApiEndpoint = 'http://localhost:8000/mock/ocr/'
 
 const title = 'ふぉんとさーち（β）'
 const maxChars = 25
+const abortTime = 15000
 
 const fontClassName = (fontName: string) => {
   switch (fontName) {
@@ -212,6 +213,8 @@ const Home: NextPage = () => {
   const [croppedImage, setCroppedImage] = useState('')
   const [selectedFont, setSelectedFont] = useState(null)
   const [errorOcr, setErrorOcr] = useState(false)
+  const [errorVfr, setErrorVfr] = useState(false)
+  const [timeoutVfr, setTimeoutVfr] = useState(false)
 
   useEffect(() => {
     if (firstRender.current) {
@@ -227,6 +230,7 @@ const Home: NextPage = () => {
   const doneSubmit = () => {
     return Boolean(submitCount)
   }
+
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader()
@@ -285,17 +289,24 @@ const Home: NextPage = () => {
       },
     ]
 
+    const controller = new AbortController()
+    const timeout = setTimeout(() => {
+      controller.abort()
+    }, abortTime)
+
     Promise.all(
       fetchParams.map((param) =>
         fetch(param.endpoint, {
           method: param.method,
           headers: param.headers,
           body: param.body,
-        })
+          signal: controller.signal,
+        }).catch((err) => err)
       )
     )
       .then((responses) => {
-        console.log(responses)
+        // console.log('---responses--')
+        // console.log(responses)
         return Promise.all(
           responses.map((res) =>
             res instanceof Error ? res : res.json().catch((err) => err)
@@ -303,14 +314,30 @@ const Home: NextPage = () => {
         )
       })
       .then((data) => {
-        console.log(data[0])
-        console.log(data[1], typeof data[1])
+        // console.log('---font--')
+        // console.log(
+        //   data[0],
+        //   data[0] instanceof Error,
+        //   typeof data[0],
+        //   data[0].name
+        // )
+        // console.log('---orc--')
+        // console.log(data[1], data[1] instanceof Error, typeof data[1])
 
         // フォント認識
-        setFonts(data[0].fonts)
+        if ('error' in data[0] || data[0] instanceof Error) {
+          if (data[0].name === 'AbortError') {
+            setTimeoutVfr(true)
+          }
+          setErrorVfr(true)
+        } else {
+          setFonts(data[0].fonts)
+          setErrorVfr(false)
+          setTimeoutVfr(false)
+        }
 
         // ocr
-        if ('error' in data[1]) {
+        if ('error' in data[1] || data[1] instanceof Error) {
           setErrorOcr(true)
           return
         }
@@ -329,6 +356,7 @@ const Home: NextPage = () => {
         setErrorOcr(false)
       })
       .finally(() => {
+        clearTimeout(timeout)
         setLoading(false)
       })
   }
@@ -388,7 +416,9 @@ const Home: NextPage = () => {
           </div>
         )}
 
+        {timeoutVfr && <h1>数分時間を置いてお試しください</h1>}
         {errorOcr && <h1>ocr エラー</h1>}
+        {errorVfr && <h1>vfr エラー</h1>}
 
         {loading ? (
           <Loading />
