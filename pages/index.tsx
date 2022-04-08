@@ -3,9 +3,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
+import FontModal from '../components/fontModal'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
-import Modal from '../components/Modal'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 // const fontSearchApiEndpoint =
@@ -117,6 +117,8 @@ const fontClassName = (fontName: string) => {
       return 'font-morisawabizudmincho'
     case 'morisawabizudpmincho':
       return 'font-morisawabizudpmincho'
+    default:
+      return 'font-notosansjp'
   }
 }
 
@@ -328,8 +330,8 @@ const Home: NextPage = () => {
           {!Boolean(image) && (
             <>
               <h1 className="pb-3 text-3xl">{title}</h1>
-              <h2 className="pb-10 text-lg">
-                似ている日本語フォントを探します
+              <h2 className="mb-4 pb-10 text-lg">
+                画像中のテキストに似ている日本語フォントを探します
               </h2>
             </>
           )}
@@ -356,10 +358,10 @@ const Home: NextPage = () => {
         {Boolean(image) && (
           <div>
             <button
-              className="mt-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+              className="btn mt-4"
               onClick={() => setSubmitCount(submitCount + 1)}
             >
-              そうしん！
+              検索
             </button>
           </div>
         )}
@@ -373,10 +375,11 @@ const Home: NextPage = () => {
         ) : (
           Boolean(fonts) &&
           fonts.map((font, index) => (
-            <button
+            <label
               key={index}
-              className="my-1 w-96 animate-fade-in-up rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100"
+              className="my-1 w-96 animate-fade-in-up cursor-pointer rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100"
               onClick={() => handleClick(font)}
+              htmlFor="my-modal-4"
             >
               <div>
                 <p
@@ -394,31 +397,51 @@ const Home: NextPage = () => {
                   {font.fontWeight}
                 </p>
               </div>
-            </button>
+            </label>
           ))
         )}
 
-        {showModal && (
-          <Modal
-            title={displayFontName}
-            main={
-              <div>
-                <img src={croppedImage} />
-                <div>
-                  <p
-                    className={`mt-2 text-5xl ${fontWeightClassName(
-                      selectedFont.fontWeight
-                    )} ${fontClassName(selectedFont.fontName)}`}
-                  >
-                    {displayText}
-                  </p>
-                </div>
-              </div>
-            }
-            setShowModal={setShowModal}
-          />
-        )}
+        <FontModal
+          id="my-modal-4"
+          fontName={displayFontName}
+          img={croppedImage}
+          styleFont={fontClassName(selectedFont.fontName)}
+          styleFontWeight={fontWeightClassName(selectedFont.fontWeight)}
+          text={displayText}
+        />
       </main>
+
+      <footer className="mt-8 flex w-full flex-col items-center justify-center gap-2 border-t">
+        <div className="flex flex-row flex-wrap gap-8 pt-2">
+          <a
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm hover:underline"
+          >
+            利用規約
+          </a>
+          <a
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm hover:underline"
+          >
+            プライバシーポリシー
+          </a>
+          <a
+            href="https://twitter.com/unpuy_tw"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm hover:underline"
+          >
+            運営者
+          </a>
+        </div>
+        <p className="flex items-center justify-center text-sm">
+          &copy; bootch
+        </p>
+      </footer>
     </div>
   )
 }
