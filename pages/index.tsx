@@ -4,6 +4,8 @@ import Head from 'next/head'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ImageUploader from '../components/imageUploader'
+import Loading from '../components/loading'
+import Modal from '../components/Modal'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 // const fontSearchApiEndpoint =
@@ -14,6 +16,14 @@ const visionApiEndpoint = 'http://localhost:8000/mock/ocr/'
 const title = 'ふぉんとさーち（β）'
 const maxChars = 25
 const abortTime = 15000
+
+type PredictFont = {
+  fontName: string
+  fontNameJa: string
+  fontNameEn: string
+  fontWeight: number
+  score: number
+}
 
 const fontClassName = (fontName: string) => {
   switch (fontName) {
@@ -130,91 +140,44 @@ const fontWeightClassName = (fontWeight: number) => {
       return 'font-extrabold'
     case 900:
       return 'font-black'
+    default:
+      return 'font-normal'
   }
-}
-
-const Loading = () => {
-  return (
-    <div className="height-0 absolute top-0 flex h-screen w-screen items-center justify-center bg-black bg-opacity-25">
-      <div className="flex justify-center space-x-2">
-        <div className="h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
-        <div className="animation-delay-100  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
-        <div className="animation-delay-200  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
-        <div className="animation-delay-300  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
-        <div className="animation-delay-400  h-4 w-1 animate-ping rounded-full bg-blue-700"></div>
-      </div>
-    </div>
-  )
-}
-
-const Modal = ({ img, fontName, fontNameJa, fontWeight, setShowModal }) => {
-  return (
-    <>
-      <div className="fixed inset-0 z-50 flex animate-fade-in-up items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-3xl">
-          <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
-            <div className="border-blueGray-200 flex items-start justify-between rounded-t border-b border-solid p-5">
-              <h3 className="text-center text-2xl  text-indigo-500">
-                {' '}
-                {fontNameJa}{' '}
-                {fontWeightClassName(fontWeight).replace('font-', '')}-
-                {fontWeight}
-              </h3>
-              <button
-                type="button"
-                className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
-                onClick={() => setShowModal(false)}
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-            <div className="px-10 pb-5">
-              <img src={img} />
-              <>
-                <div>
-                  <p
-                    className={`mt-2 text-5xl ${fontWeightClassName(
-                      fontWeight
-                    )} ${fontClassName(fontName)}`}
-                  >
-                    ロゴデザイン
-                  </p>
-                </div>
-              </>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
-  )
 }
 
 const Home: NextPage = () => {
   const [image, setImage] = useState('')
   const [cropper, setCropper] = useState<any>()
   const [text, setText] = useState('')
-  const [fonts, setFonts] = useState([])
+  const [fonts, setFonts] = useState<PredictFont[]>([])
   const [loading, setLoading] = useState(false)
   const [submitCount, setSubmitCount] = useState(0) // 送信されたときに useEffect走るように（countじゃくていいのだが…）
   const firstRender = useRef(true)
   const [showModal, setShowModal] = useState(false)
   const [croppedImage, setCroppedImage] = useState('')
-  const [selectedFont, setSelectedFont] = useState(null)
+  const [selectedFont, setSelectedFont] = useState<PredictFont>({
+    fontName: 'notosansjp',
+    fontNameJa: 'Noto Sans Japanese',
+    fontNameEn: 'Noto Sans Japanese',
+    fontWeight: 400,
+    score: 1.0,
+  })
   const [errorOcr, setErrorOcr] = useState(false)
   const [errorVfr, setErrorVfr] = useState(false)
   const [timeoutVfr, setTimeoutVfr] = useState(false)
+
+  const displayFontName = selectedFont
+    ? selectedFont.fontNameJa +
+      ' ' +
+      fontWeightClassName(selectedFont.fontWeight).replace('font-', '') +
+      '-' +
+      selectedFont.fontWeight
+    : ''
+  const displayText = errorOcr
+    ? 'サンプル文字です'
+    : Boolean(text)
+    ? text
+    : '＼(^o^)／'
 
   useEffect(() => {
     if (firstRender.current) {
@@ -305,8 +268,6 @@ const Home: NextPage = () => {
       )
     )
       .then((responses) => {
-        // console.log('---responses--')
-        // console.log(responses)
         return Promise.all(
           responses.map((res) =>
             res instanceof Error ? res : res.json().catch((err) => err)
@@ -314,16 +275,6 @@ const Home: NextPage = () => {
         )
       })
       .then((data) => {
-        // console.log('---font--')
-        // console.log(
-        //   data[0],
-        //   data[0] instanceof Error,
-        //   typeof data[0],
-        //   data[0].name
-        // )
-        // console.log('---orc--')
-        // console.log(data[1], data[1] instanceof Error, typeof data[1])
-
         // フォント認識
         if ('error' in data[0] || data[0] instanceof Error) {
           if (data[0].name === 'AbortError') {
@@ -361,7 +312,7 @@ const Home: NextPage = () => {
       })
   }
 
-  const handleClick = (font) => {
+  const handleClick = (font: PredictFont) => {
     setShowModal(true)
     setSelectedFont(font)
   }
@@ -424,8 +375,7 @@ const Home: NextPage = () => {
           fonts.map((font, index) => (
             <button
               key={index}
-              className="w-100 my-1 animate-fade-in-up rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105"
-              // onClick={() => setShowModal(true)}
+              className="my-1 w-96 animate-fade-in-up rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100"
               onClick={() => handleClick(font)}
             >
               <div>
@@ -434,11 +384,7 @@ const Home: NextPage = () => {
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
-                  {errorOcr
-                    ? 'サンプル文字です'
-                    : Boolean(text)
-                    ? text
-                    : '(・_・)'}
+                  {displayText}
                 </p>
               </div>
               <div className="mt-4 flex justify-end">
@@ -454,10 +400,21 @@ const Home: NextPage = () => {
 
         {showModal && (
           <Modal
-            img={croppedImage}
-            fontName={selectedFont.fontName}
-            fontNameJa={selectedFont.fontNameJa}
-            fontWeight={selectedFont.fontWeight}
+            title={displayFontName}
+            main={
+              <div>
+                <img src={croppedImage} />
+                <div>
+                  <p
+                    className={`mt-2 text-5xl ${fontWeightClassName(
+                      selectedFont.fontWeight
+                    )} ${fontClassName(selectedFont.fontName)}`}
+                  >
+                    {displayText}
+                  </p>
+                </div>
+              </div>
+            }
             setShowModal={setShowModal}
           />
         )}
