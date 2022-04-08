@@ -8,7 +8,8 @@ import ImageUploader from '../components/imageUploader'
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 // const fontSearchApiEndpoint =
 //   'https://1mt3pjzokj.execute-api.ap-northeast-1.amazonaws.com/prod/v1/fonts/'
-const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
+// const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
+const visionApiEndpoint = 'http://localhost:8000/mock/ocr/'
 
 const title = 'ふぉんとさーち（β）'
 const maxChars = 25
@@ -210,6 +211,7 @@ const Home: NextPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [croppedImage, setCroppedImage] = useState('')
   const [selectedFont, setSelectedFont] = useState(null)
+  const [errorOcr, setErrorOcr] = useState(false)
 
   useEffect(() => {
     if (firstRender.current) {
@@ -247,8 +249,6 @@ const Home: NextPage = () => {
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
 
-    const tasks = []
-
     const fontSearchHeaders = new Headers()
     fontSearchHeaders.append('Content-Type', 'application/json')
     fontSearchHeaders.append(
@@ -258,12 +258,6 @@ const Home: NextPage = () => {
     const fontSearchBody = JSON.stringify({
       content: encodedImage,
     })
-    const fontSearch = fetch(fontSearchApiEndpoint, {
-      method: 'POST',
-      headers: fontSearchHeaders,
-      body: fontSearchBody,
-    })
-    tasks.push(fontSearch)
 
     const ocrHeaders = new Headers()
     ocrHeaders.append('Content-Type', 'application/json')
@@ -276,21 +270,51 @@ const Home: NextPage = () => {
       ],
     })
 
-    if (process.env.NODE_ENV !== 'development') {
-      const ocr = fetch(visionApiEndpoint, {
+    const fetchParams = [
+      {
+        endpoint: fontSearchApiEndpoint,
+        method: 'POST',
+        headers: fontSearchHeaders,
+        body: fontSearchBody,
+      },
+      {
+        endpoint: visionApiEndpoint,
         method: 'POST',
         headers: ocrHeaders,
         body: ocrBody,
-      })
-      tasks.push(ocr)
-    }
+      },
+    ]
 
-    Promise.all(tasks)
-      .then((responses) => Promise.all(responses.map((res) => res.json())))
+    Promise.all(
+      fetchParams.map((param) =>
+        fetch(param.endpoint, {
+          method: param.method,
+          headers: param.headers,
+          body: param.body,
+        })
+      )
+    )
+      .then((responses) => {
+        console.log(responses)
+        return Promise.all(
+          responses.map((res) =>
+            res instanceof Error ? res : res.json().catch((err) => err)
+          )
+        )
+      })
       .then((data) => {
+        console.log(data[0])
+        console.log(data[1], typeof data[1])
+
+        // フォント認識
         setFonts(data[0].fonts)
-        console.log(data[1])
-        if (data.length > 1 && 'fullTextAnnotation' in data[1].responses[0]) {
+
+        // ocr
+        if ('error' in data[1]) {
+          setErrorOcr(true)
+          return
+        }
+        if ('fullTextAnnotation' in data[1].responses[0]) {
           const detectedText =
             data[1].responses[0].fullTextAnnotation.text.replace(/\r?\n/g, '')
           const slicedText =
@@ -298,9 +322,11 @@ const Home: NextPage = () => {
               ? detectedText
               : detectedText.slice(0, maxChars)
           setText(slicedText)
-        } else {
-          setText('')
+          setErrorOcr(false)
+          return
         }
+        setText('')
+        setErrorOcr(false)
       })
       .finally(() => {
         setLoading(false)
@@ -311,8 +337,6 @@ const Home: NextPage = () => {
     setShowModal(true)
     setSelectedFont(font)
   }
-
-  console.log(text, text.length)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -364,6 +388,8 @@ const Home: NextPage = () => {
           </div>
         )}
 
+        {errorOcr && <h1>ocr エラー</h1>}
+
         {loading ? (
           <Loading />
         ) : (
@@ -381,10 +407,10 @@ const Home: NextPage = () => {
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
-                  {Boolean(text)
+                  {errorOcr
+                    ? 'サンプル文字です'
+                    : Boolean(text)
                     ? text
-                    : process.env.NODE_ENV === 'development'
-                    ? 'ロゴデザイン'
                     : '(・_・)'}
                 </p>
               </div>
