@@ -5,6 +5,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        128: '32rem',
+        156: '48rem',
+      },
       fontFamily: {
         kaiseiopti: ['"Kaisei Opti"'],
         kaiseidecol: ['"Kaisei Decol"'],
