@@ -10,10 +10,7 @@ import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
-// const fontSearchApiEndpoint =
-//   'https://1mt3pjzokj.execute-api.ap-northeast-1.amazonaws.com/prod/v1/fonts/'
-// const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
-const visionApiEndpoint = 'http://localhost:8000/mock/ocr/'
+const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
 
 const title = 'ふぉんとさーち（β）'
 const maxChars = 25
