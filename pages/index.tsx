@@ -181,6 +181,8 @@ const Home: NextPage = () => {
     ? text
     : '＼(^o^)／'
 
+  const fontModalKey = 'font-modal'
+
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false
@@ -379,7 +381,7 @@ const Home: NextPage = () => {
               key={index}
               className="my-1 w-96 animate-fade-in-up cursor-pointer rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100"
               onClick={() => handleClick(font)}
-              htmlFor="my-modal-4"
+              htmlFor={fontModalKey}
             >
               <div>
                 <p
@@ -402,7 +404,7 @@ const Home: NextPage = () => {
         )}
 
         <FontModal
-          id="my-modal-4"
+          id={fontModalKey}
           fontName={displayFontName}
           img={croppedImage}
           styleFont={fontClassName(selectedFont.fontName)}
