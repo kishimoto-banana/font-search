@@ -387,20 +387,17 @@ const Home: NextPage = () => {
           </div>
           <Cropper
             src={image}
-            style={{ height: 400, width: '100%' }}
+            className="h-72 w-full md:h-96 md:w-156"
             zoomTo={0.1}
             initialAspectRatio={1}
             viewMode={1}
-            minCropBoxHeight={10}
-            minCropBoxWidth={10}
-            background={false}
             responsive={true}
             autoCropArea={1}
-            checkOrientation={false}
+            autoCrop={true}
+            checkOrientation={true}
             onInitialized={(instance) => {
               setCropper(instance)
             }}
-            preview=".img-preview"
             guides={true}
           />
         </div>
