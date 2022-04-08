@@ -3,7 +3,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
+import ExampleModal from '../components/ExampleModal'
 import FontModal from '../components/fontModal'
+import Footer from '../components/Footer'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 
@@ -274,7 +276,7 @@ const Home: NextPage = () => {
       .then((responses) => {
         return Promise.all(
           responses.map((res) =>
-            res instanceof Error ? res : res.json().catch((err) => err)
+            res instanceof Error ? res : res.json().catch((err: any) => err)
           )
         )
       })
@@ -358,14 +360,23 @@ const Home: NextPage = () => {
         </div>
 
         {Boolean(image) && (
-          <div>
-            <button
-              className="btn mt-4"
-              onClick={() => setSubmitCount(submitCount + 1)}
+          <>
+            <label
+              htmlFor="example-modal"
+              className="modal-button cursor-pointer pt-1 text-lg text-indigo-500 underline hover:text-indigo-800"
             >
-              検索
-            </button>
-          </div>
+              良い例と悪い例
+            </label>
+
+            <div>
+              <button
+                className="btn mt-4"
+                onClick={() => setSubmitCount(submitCount + 1)}
+              >
+                検索
+              </button>
+            </div>
+          </>
         )}
 
         {timeoutVfr && <h1>数分時間を置いてお試しください</h1>}
@@ -411,39 +422,16 @@ const Home: NextPage = () => {
           styleFontWeight={fontWeightClassName(selectedFont.fontWeight)}
           text={displayText}
         />
-      </main>
 
-      <footer className="mt-8 flex w-full flex-col items-center justify-center gap-2 border-t">
-        <div className="flex flex-row flex-wrap gap-8 pt-2">
-          <a
-            href=""
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm hover:underline"
-          >
-            利用規約
-          </a>
-          <a
-            href=""
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm hover:underline"
-          >
-            プライバシーポリシー
-          </a>
-          <a
-            href="https://twitter.com/unpuy_tw"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm hover:underline"
-          >
-            運営者
-          </a>
-        </div>
-        <p className="flex items-center justify-center text-sm">
-          &copy; bootch
-        </p>
-      </footer>
+        <ExampleModal />
+
+        {/* <div className="">
+          <TwitterShareButton url="" title="">
+            <TwitterIcon size={32} round={true} />
+          </TwitterShareButton>
+        </div> */}
+      </main>
+      <Footer />
     </div>
   )
 }

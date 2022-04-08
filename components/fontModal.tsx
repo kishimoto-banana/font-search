@@ -20,6 +20,12 @@ const FontModal: React.FC<Props> = ({
       <input type="checkbox" id={id} className="modal-toggle" />
       <label htmlFor={id} className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
+          <label
+            htmlFor={id}
+            className="btn btn-circle btn-sm absolute right-2 top-2 z-10"
+          >
+            ✕
+          </label>
           <h3 className="text-2xl text-indigo-500">{fontName}</h3>
           <div className="pt-4">
             <img src={img} />
