@@ -8,6 +8,7 @@ import FontModal from '../components/fontModal'
 import Footer from '../components/Footer'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
+import Share from '../components/share'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
@@ -422,11 +423,7 @@ const Home: NextPage = () => {
 
         <ExampleModal />
 
-        {/* <div className="">
-          <TwitterShareButton url="" title="">
-            <TwitterIcon size={32} round={true} />
-          </TwitterShareButton>
-        </div> */}
+        <Share />
       </main>
       <Footer />
     </div>
