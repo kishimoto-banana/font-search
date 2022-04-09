@@ -26,7 +26,7 @@ const FontModal: React.FC<Props> = ({
           >
             ✕
           </label>
-          <h3 className="text-2xl">{fontName}</h3>
+          <h3 className="px-4 text-2xl">{fontName}</h3>
           <div className="pt-4">
             <img src={img} />
             <p
