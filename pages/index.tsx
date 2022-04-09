@@ -15,7 +15,7 @@ import niwatori from '../public/niwatori.jpeg'
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
 
-const title = 'ふぉんとさーち（β）'
+const title = 'フォントピント（β）'
 const maxChars = 25
 const abortTime = 15000
 
@@ -328,9 +328,10 @@ const Home: NextPage = () => {
         {!Boolean(image) && (
           <>
             <h1 className="pb-3 text-3xl">{title}</h1>
-            <h2 className="mb-4 pb-10 text-lg">
-              画像中のテキストに似ている日本語フォントを探します
-            </h2>
+            <div className="mb-4 pb-10 text-center text-lg">
+              <p>画像中のテキストに似ている</p>
+              <p>日本語フォントを探します</p>
+            </div>
           </>
         )}
         <div className="mb-4">
