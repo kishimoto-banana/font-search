@@ -376,7 +376,7 @@ const Home: NextPage = () => {
         )}
 
         {!loading && !errorVfr && errorOcr && (
-          <div className="py-4">
+          <div className="pt-4">
             <Image
               src={niwatori}
               width={100}
