@@ -321,7 +321,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>{title}</title>
+        <title>フォントピント | 画像から日本語フォントを検索できるサイト</title>
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">

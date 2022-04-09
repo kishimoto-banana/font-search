@@ -31,6 +31,33 @@ export default function Document() {
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff"></meta>
+        <meta charSet="utf-8" />
+        <meta property="og:site_name" content="フォントピント" />
+        <meta
+          property="og:title"
+          content="フォントピント | 画像から日本語フォントを検索できるサイト"
+        />
+        <meta
+          property="og:description"
+          content="画像中のテキストから似ている日本語フォントを検索します。"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://fontpint.com" />
+        <meta
+          property="og:image"
+          content="https://fontpint.com/favicons/ogp.png"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="https://fontpint.comk" />
+        <meta
+          name="twitter:image"
+          content="https://fontpint.com/favicons/ogp.png"
+        />
+        <meta name="keywords" content="フォント,検索,日本語フォント,画像" />
+        <meta
+          name="description"
+          content="画像中のテキストから似ている日本語フォントを検索します"
+        />
         <GoogleAnalytics />
       </Head>
       <body>
