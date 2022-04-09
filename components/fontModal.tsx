@@ -26,10 +26,12 @@ const FontModal: React.FC<Props> = ({
           >
             ✕
           </label>
-          <h3 className="text-2xl text-indigo-500">{fontName}</h3>
+          <h3 className="text-2xl">{fontName}</h3>
           <div className="pt-4">
             <img src={img} />
-            <p className={`py-4 text-5xl ${styleFont} ${styleFontWeight}`}>
+            <p
+              className={`py-4 text-3xl md:text-5xl ${styleFont} ${styleFontWeight}`}
+            >
               {text}
             </p>
           </div>

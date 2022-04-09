@@ -433,7 +433,7 @@ const Home: NextPage = () => {
                 </p>
               </div>
               <div className="mt-2 flex justify-end md:mt-4">
-                <p className="text-md font-normal text-indigo-500">
+                <p className="text-md font-normal text-gray-400 md:text-lg">
                   {font.fontNameJa}{' '}
                   {fontWeightClassName(font.fontWeight).replace('font-', '')}-
                   {font.fontWeight}
