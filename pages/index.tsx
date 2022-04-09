@@ -328,18 +328,19 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
-        <div>
-          {!Boolean(image) && (
-            <>
-              <h1 className="pb-3 text-3xl">{title}</h1>
-              <h2 className="mb-4 pb-10 text-lg">
-                画像中のテキストに似ている日本語フォントを探します
-              </h2>
-            </>
-          )}
-          <div className="mb-4">
-            <ImageUploader onChange={onSelectFile} />
-          </div>
+        {!Boolean(image) && (
+          <>
+            <h1 className="pb-3 text-3xl">{title}</h1>
+            <h2 className="mb-4 pb-10 text-lg">
+              画像中のテキストに似ている日本語フォントを探します
+            </h2>
+          </>
+        )}
+        <div className="mb-4">
+          <ImageUploader onChange={onSelectFile} />
+        </div>
+
+        {Boolean(image) && (
           <Cropper
             src={image}
             className="h-72 w-full md:h-96 md:w-156"
@@ -355,7 +356,7 @@ const Home: NextPage = () => {
             }}
             guides={true}
           />
-        </div>
+        )}
 
         {Boolean(image) && (
           <>
@@ -412,7 +413,7 @@ const Home: NextPage = () => {
           ))
         )}
 
-        <div className="pt-12">
+        <div className="pt-16">
           <Share />
         </div>
 
