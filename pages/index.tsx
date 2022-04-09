@@ -1,6 +1,7 @@
 import 'cropperjs/dist/cropper.css'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ExampleModal from '../components/exampleModal'
@@ -9,6 +10,7 @@ import Footer from '../components/Footer'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 import Share from '../components/share'
+import niwatori from '../public/niwatori.jpeg'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
@@ -316,11 +318,6 @@ const Home: NextPage = () => {
       })
   }
 
-  // const handleClick = (font: PredictFont) => {
-  //   setShowModal(true)
-  //   setSelectedFont(font)
-  // }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -378,12 +375,45 @@ const Home: NextPage = () => {
           </>
         )}
 
-        {timeoutVfr && <h1>数分時間を置いてお試しください</h1>}
-        {errorOcr && <h1>ocr エラー</h1>}
-        {errorVfr && <h1>vfr エラー</h1>}
+        {!loading && !errorVfr && errorOcr && (
+          <div className="py-4">
+            <Image
+              src={niwatori}
+              width={100}
+              height={100}
+              objectFit="contain"
+            />
+            <p className="text-lg font-bold">文字を認識できていません</p>
+          </div>
+        )}
 
         {loading ? (
           <Loading />
+        ) : errorVfr ? (
+          timeoutVfr ? (
+            <div className="py-4">
+              <Image
+                src={niwatori}
+                width={100}
+                height={100}
+                objectFit="contain"
+              />
+              <p className="text-lg font-bold">数分後にお試しください</p>
+              <p className="text-lg font-bold">
+                （タイミングによって遅いときがあります）
+              </p>
+            </div>
+          ) : (
+            <div className="py-4">
+              <Image
+                src={niwatori}
+                width={100}
+                height={100}
+                objectFit="contain"
+              />
+              <p className="text-lg font-bold">現在動いていません</p>
+            </div>
+          )
         ) : (
           Boolean(fonts) &&
           fonts.map((font, index) => (
