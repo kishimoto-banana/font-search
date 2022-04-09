@@ -154,7 +154,7 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [submitCount, setSubmitCount] = useState(0) // 送信されたときに useEffect走るように（countじゃくていいのだが…）
   const firstRender = useRef(true)
-  const [showModal, setShowModal] = useState(false)
+  // const [showModal, setShowModal] = useState(false)
   const [croppedImage, setCroppedImage] = useState('')
   const [selectedFont, setSelectedFont] = useState<PredictFont>({
     fontName: 'notosansjp',
@@ -315,10 +315,10 @@ const Home: NextPage = () => {
       })
   }
 
-  const handleClick = (font: PredictFont) => {
-    setShowModal(true)
-    setSelectedFont(font)
-  }
+  // const handleClick = (font: PredictFont) => {
+  //   setShowModal(true)
+  //   setSelectedFont(font)
+  // }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -387,20 +387,20 @@ const Home: NextPage = () => {
           fonts.map((font, index) => (
             <label
               key={index}
-              className="my-1 w-96 animate-fade-in-up cursor-pointer rounded-lg bg-white py-4 px-8 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100"
-              onClick={() => handleClick(font)}
+              className="my-1 w-80 animate-fade-in-up cursor-pointer rounded-lg bg-white py-4 px-4 shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 md:w-100 md:px-8"
+              onClick={() => setSelectedFont(font)}
               htmlFor={fontModalKey}
             >
               <div>
                 <p
-                  className={`mt-2 text-5xl ${fontWeightClassName(
+                  className={`mt-2 text-3xl md:text-5xl ${fontWeightClassName(
                     font.fontWeight
                   )} ${fontClassName(font.fontName)}`}
                 >
                   {displayText}
                 </p>
               </div>
-              <div className="mt-4 flex justify-end">
+              <div className="mt-2 flex justify-end md:mt-4">
                 <p className="text-md font-normal text-indigo-500">
                   {font.fontNameJa}{' '}
                   {fontWeightClassName(font.fontWeight).replace('font-', '')}-
