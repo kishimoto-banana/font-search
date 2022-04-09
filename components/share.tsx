@@ -12,7 +12,7 @@ const Share = () => {
   const url = 'https://font-search.vercel.app/'
   const title = '日本語フォントを検索します'
   return (
-    <div className="flex flex-row gap-2">
+    <div className="flex flex-row gap-4">
       <TwitterShareButton url={url} title={title}>
         <TwitterIcon size={size} round={true} />
       </TwitterShareButton>
