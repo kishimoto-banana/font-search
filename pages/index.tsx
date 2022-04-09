@@ -331,6 +331,7 @@ const Home: NextPage = () => {
             <div className="pb-14 text-center text-lg">
               <p>画像中のテキストに似ている</p>
               <p>日本語フォントを探します</p>
+              <p>(´；ω；｀)</p>
             </div>
           </>
         )}
