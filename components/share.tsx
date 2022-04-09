@@ -9,11 +9,11 @@ import {
 
 const Share = () => {
   const size = 32
-  const url = 'https://font-search.vercel.app/'
-  const title = '日本語フォントを検索します'
+  const url = 'https://fontpint.com'
+  const title = 'フォントピント | 画像から日本語フォントを検索できるサイト'
   return (
     <div className="flex flex-row gap-4">
-      <TwitterShareButton url={url} title={title}>
+      <TwitterShareButton url={url} title={title} hashtags={['フォントピント']}>
         <TwitterIcon size={size} round={true} />
       </TwitterShareButton>
 
