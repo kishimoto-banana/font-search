@@ -412,6 +412,10 @@ const Home: NextPage = () => {
           ))
         )}
 
+        <div className="pt-12">
+          <Share />
+        </div>
+
         <FontModal
           id={fontModalKey}
           fontName={displayFontName}
@@ -422,8 +426,6 @@ const Home: NextPage = () => {
         />
 
         <ExampleModal />
-
-        <Share />
       </main>
       <Footer />
     </div>
