@@ -327,8 +327,8 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
         {!Boolean(image) && (
           <>
-            <h1 className="pb-3 text-3xl">{title}</h1>
-            <div className="mb-4 pb-10 text-center text-lg">
+            <h1 className="pb-5 text-3xl">{title}</h1>
+            <div className="pb-14 text-center text-lg">
               <p>画像中のテキストに似ている</p>
               <p>日本語フォントを探します</p>
             </div>
