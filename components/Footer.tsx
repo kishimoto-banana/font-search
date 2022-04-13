@@ -6,12 +6,20 @@ const Footer = () => {
           href="https://twitter.com/unpuy_tw"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm hover:underline"
+          className="text-md hover:underline"
         >
           運営者
         </a>
+        <a
+          href="https://form.run/@fontpint"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-md hover:underline"
+        >
+          お問い合わせ
+        </a>
       </div>
-      <p className="flex items-center justify-center text-sm">&copy; bootch</p>
+      <p className="text-md flex items-center justify-center">&copy; bootch</p>
     </footer>
   )
 }
