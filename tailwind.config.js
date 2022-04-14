@@ -56,6 +56,7 @@ module.exports = {
         morisawabizudgothic: ['"BIZ UDGothic"'],
         morisawabizudmincho: ['"BIZ UDMincho"'],
         morisawabizudpmincho: ['"BIZ UDPMincho"'],
+        abwarakum: ['"ab-waraku-m"'],
       },
       keyframes: {
         'fade-in-down': {
