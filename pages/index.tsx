@@ -338,6 +338,10 @@ const Home: NextPage = () => {
           <ImageUploader onChange={onSelectFile} />
         </div>
 
+        <p className="font-abwarakum text-2xl">
+          新しい時代のこころを映すタイプフェイスデザイン
+        </p>
+
         {Boolean(image) && (
           <Cropper
             src={image}
