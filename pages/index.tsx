@@ -321,15 +321,19 @@ const Home: NextPage = ({}) => {
   }
   if (typeof document !== 'undefined') {
     const target = document.getElementsByTagName('html')[0]
+    // document.getElementById
 
     // オブザーバインスタンスを作成
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
+        const e = HTMLElement
+        // @ts-ignore
         console.log(
           'observe',
           mutation.target.classList.contains('wf-active'),
           !mutation.target.classList.contains('wf-loading')
         )
+        // @ts-ignore
         if (
           mutation.target.classList.contains('wf-active') &&
           !mutation.target.classList.contains('wf-loading')
@@ -342,6 +346,7 @@ const Home: NextPage = ({}) => {
     // オブザーバの設定
     const config = {
       attributes: true,
+      attributeFilter: ['class'],
     }
 
     // 対象ノードとオブザーバの設定を渡す
