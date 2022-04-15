@@ -326,17 +326,15 @@ const Home: NextPage = ({}) => {
     // オブザーバインスタンスを作成
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        const e = HTMLElement
-        // @ts-ignore
+        const element = mutation.target as HTMLElement
         console.log(
           'observe',
-          mutation.target.classList.contains('wf-active'),
-          !mutation.target.classList.contains('wf-loading')
+          element.classList.contains('wf-active'),
+          !element.classList.contains('wf-loading')
         )
-        // @ts-ignore
         if (
-          mutation.target.classList.contains('wf-active') &&
-          !mutation.target.classList.contains('wf-loading')
+          element.classList.contains('wf-active') &&
+          !element.classList.contains('wf-loading')
         ) {
           setDoneAdobeFontLoading(true)
         }
