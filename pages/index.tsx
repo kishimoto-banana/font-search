@@ -2,6 +2,7 @@ import 'cropperjs/dist/cropper.css'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Script from 'next/script'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ExampleModal from '../components/exampleModal'
@@ -149,7 +150,7 @@ const fontWeightClassName = (fontWeight: number) => {
   }
 }
 
-const Home: NextPage = () => {
+const Home: NextPage = ({}) => {
   const [image, setImage] = useState('')
   const [cropper, setCropper] = useState<any>()
   const [text, setText] = useState('')
@@ -169,6 +170,7 @@ const Home: NextPage = () => {
   const [errorOcr, setErrorOcr] = useState(false)
   const [errorVfr, setErrorVfr] = useState(false)
   const [timeoutVfr, setTimeoutVfr] = useState(false)
+  const [doneAdobeFontsLoading, setDoneAdobeFontLoading] = useState(false)
 
   const displayFontName = selectedFont
     ? selectedFont.fontNameJa +
@@ -317,12 +319,61 @@ const Home: NextPage = () => {
         setLoading(false)
       })
   }
+  if (typeof document !== 'undefined') {
+    const target = document.getElementsByTagName('html')[0]
+
+    // オブザーバインスタンスを作成
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        console.log(
+          'observe',
+          mutation.target.classList.contains('wf-active'),
+          !mutation.target.classList.contains('wf-loading')
+        )
+        if (
+          mutation.target.classList.contains('wf-active') &&
+          !mutation.target.classList.contains('wf-loading')
+        ) {
+          setDoneAdobeFontLoading(true)
+        }
+      })
+    })
+
+    // オブザーバの設定
+    const config = {
+      attributes: true,
+    }
+
+    // 対象ノードとオブザーバの設定を渡す
+    observer.observe(target, config)
+  }
+
+  console.log('adobe', doneAdobeFontsLoading)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
         <title>フォントピント | 画像から日本語フォントを検索できるサイト</title>
       </Head>
+
+      {['csr3vpu', 'bqu5lpg', 'piq8klb', 'piq8klb', 'piq8klb'].map((kid) => (
+        <Script
+          dangerouslySetInnerHTML={{
+            __html: `
+                (function(d) {
+                  var config = {
+                    kitId: '${kid}',
+                    scriptTimeout: 3000,
+                    async: true
+                  },
+                  h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)({active: function() {console.log("aa")}})}catch(e){}};s.parentNode.insertBefore(tk,s)
+                })(document);
+                `,
+          }}
+          strategy="afterInteractive"
+          // onLoad={() => setAdobeFontLoading(false)}
+        />
+      ))}
 
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
         {!Boolean(image) && (
@@ -338,9 +389,19 @@ const Home: NextPage = () => {
           <ImageUploader onChange={onSelectFile} />
         </div>
 
-        <p className="font-abwarakum text-2xl">
-          新しい時代のこころを映すタイプフェイスデザイン
-        </p>
+        <>
+          <p className="font-abwarakum text-2xl">
+            新しい時代のこころを映すタイプフェイスデザイン
+          </p>
+          <p className="font-yuminchopr6n text-2xl">
+            新しい時代のこころを映すタイプフェイスデザイン
+          </p>
+          <p className="font-vdlv7gothic text-2xl font-medium">
+            新しい時代のこころを映すタイプフェイスデザイン
+          </p>
+        </>
+
+        <div id="ado"></div>
 
         {Boolean(image) && (
           <Cropper
