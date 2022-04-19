@@ -6,13 +6,13 @@ import Script from 'next/script'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
 import ExampleModal from '../components/exampleModal'
+import FontLoading from '../components/fontLoading'
 import FontModal from '../components/fontModal'
 import Footer from '../components/Footer'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 import Share from '../components/share'
 import niwatori from '../public/niwatori.jpeg'
-import FontLoading from '../components/fontLoading'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
@@ -701,7 +701,8 @@ const Home: NextPage = ({}) => {
   const [errorOcr, setErrorOcr] = useState(false)
   const [errorVfr, setErrorVfr] = useState(false)
   const [timeoutVfr, setTimeoutVfr] = useState(false)
-  const [doneAdobeFontsLoading, setDoneAdobeFontLoading] = useState(false)
+  const [loadAdobeFontsNum, setLoadAdobeFontsNum] = useState(0)
+  const loadAdobeFonts = useRef<string[]>([])
 
   const displayFontName = selectedFont
     ? selectedFont.fontNameJa +
@@ -754,8 +755,6 @@ const Home: NextPage = ({}) => {
       .getCroppedCanvas()
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
-
-    // console.log(encodedImage)
 
     const fontSearchHeaders = new Headers()
     fontSearchHeaders.append('Content-Type', 'application/json')
@@ -824,7 +823,6 @@ const Home: NextPage = ({}) => {
           setErrorVfr(true)
         } else {
           setFonts(data[0].fonts)
-          setDoneAdobeFontLoading(false)
           setErrorVfr(false)
           setTimeoutVfr(false)
         }
@@ -854,25 +852,26 @@ const Home: NextPage = ({}) => {
       })
   }
 
+  const fontNamePattern = /^wf-.+-active$/
   if (typeof document !== 'undefined') {
     const target = document.getElementsByTagName('html')[0]
-    document.getElementById
 
     // オブザーバインスタンスを作成
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         const element = mutation.target as HTMLElement
-        // console.log(
-        //   'observe',
-        //   element.classList.contains('wf-active'),
-        //   !element.classList.contains('wf-loading')
-        // )
-        if (
-          element.classList.contains('wf-active') &&
-          !element.classList.contains('wf-loading')
-        ) {
-          setDoneAdobeFontLoading(true)
-        }
+        element.classList.forEach((value) => {
+          if (fontNamePattern.test(value.trim())) {
+            const fontFamily = value.split('-').slice(1, -2).join('')
+            const beforeNum = loadAdobeFonts.current.length
+            loadAdobeFonts.current = Array.from(
+              new Set(loadAdobeFonts.current.concat([fontFamily]))
+            )
+            if (beforeNum !== loadAdobeFonts.current.length) {
+              setLoadAdobeFontsNum(loadAdobeFonts.current.length)
+            }
+          }
+        })
       })
     })
 
@@ -886,10 +885,7 @@ const Home: NextPage = ({}) => {
     observer.observe(target, config)
   }
 
-  console.log('adobe', doneAdobeFontsLoading)
-  console.log(Date.now())
-  console.log(fonts)
-  console.log(submitCount)
+  console.log(loadAdobeFonts.current, loadAdobeFontsNum)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -898,9 +894,12 @@ const Home: NextPage = ({}) => {
       </Head>
 
       {Boolean(fonts) &&
-        !doneAdobeFontsLoading &&
         fonts.map((font, index) => {
-          if (font.adobeId) {
+          // adobe fontsかつまだ読み込まれていないフォントをロード
+          if (
+            font.type === 'adobe' &&
+            !loadAdobeFonts.current.includes(font.fontName)
+          ) {
             return (
               <Script
                 key={index}
@@ -917,26 +916,10 @@ const Home: NextPage = ({}) => {
                 `,
                 }}
                 strategy="afterInteractive"
-                // onLoad={() => setAdobeFontLoading(false)}
               />
             )
           }
         })}
-      {/* <Script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function(d) {
-              var config = {
-                kitId: 'sif3cdm',
-                scriptTimeout: 3000,
-                async: true
-              },
-              h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
-            })(document);
-                `,
-        }}
-        strategy="afterInteractive"
-      /> */}
 
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
         {!Boolean(image) && (
@@ -1039,7 +1022,8 @@ const Home: NextPage = ({}) => {
               htmlFor={fontModalKey}
             >
               <div>
-                {font.type === 'adobe' && !doneAdobeFontsLoading ? (
+                {font.type === 'adobe' &&
+                !loadAdobeFonts.current.includes(font.fontName) ? (
                   <FontLoading />
                 ) : (
                   <p
