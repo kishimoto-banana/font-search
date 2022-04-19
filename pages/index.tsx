@@ -12,6 +12,7 @@ import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 import Share from '../components/share'
 import niwatori from '../public/niwatori.jpeg'
+import FontLoading from '../components/fontLoading'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
 const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
@@ -25,6 +26,8 @@ type PredictFont = {
   fontNameJa: string
   fontNameEn: string
   fontWeight: number
+  type: string
+  adobeId: string
   score: number
 }
 
@@ -120,6 +123,532 @@ const fontClassName = (fontName: string) => {
       return 'font-morisawabizudmincho'
     case 'morisawabizudpmincho':
       return 'font-morisawabizudpmincho'
+    case 'aotfjunpro':
+      return 'font-aotfjunpro'
+    case 'aotfudreiminpr6n':
+      return 'font-aotfudreiminpr6n'
+    case 'aotfryuminpr6n':
+      return 'font-aotfryuminpr6n'
+    case 'aotfudshingopr6n':
+      return 'font-aotfudshingopr6n'
+    case 'aotfudshinmarugopr6n':
+      return 'font-aotfudshinmarugopr6n'
+    case 'abappare':
+      return 'font-abappare'
+    case 'abshinyubipenjigyosyotai':
+      return 'font-abshinyubipenjigyosyotai'
+    case 'abootori':
+      return 'font-abootori'
+    case 'abyogurt':
+      return 'font-abyogurt'
+    case 'abyamabikob':
+      return 'font-abyamabikob'
+    case 'abwarakum':
+      return 'font-abwarakum'
+    case 'abwalk':
+      return 'font-abwalk'
+    case 'abtsubaki':
+      return 'font-abtsubaki'
+    case 'abtorib':
+      return 'font-abtorib'
+    case 'abtegami':
+      return 'font-abtegami'
+    case 'absurugau':
+      return 'font-absurugau'
+    case 'abstickmedium':
+      return 'font-abstickmedium'
+    case 'abseiryulight':
+      return 'font-abseiryulight'
+    case 'abryusennatsu':
+      return 'font-abryusennatsu'
+    case 'abryusenharu':
+      return 'font-abryusenharu'
+    case 'abpochi':
+      return 'font-abpochi'
+    case 'abmaruhanamaki':
+      return 'font-abmaruhanamaki'
+    case 'ablineboardbold':
+      return 'font-ablineboardbold'
+    case 'abkumikim':
+      return 'font-abkumikim'
+    case 'abkumikil':
+      return 'font-abkumikil'
+    case 'abkotodamal':
+      return 'font-abkotodamal'
+    case 'abkotodamaf':
+      return 'font-abkotodamaf'
+    case 'abkokorono3':
+      return 'font-abkokorono3'
+    case 'abkokorono1':
+      return 'font-abkokorono1'
+    case 'abkokikaku':
+      return 'font-abkokikaku'
+    case 'abkoki':
+      return 'font-abkoki'
+    case 'abkazunaunf':
+      return 'font-abkazunaunf'
+    case 'abkarutael':
+      return 'font-abkarutael'
+    case 'abkailight':
+      return 'font-abkailight'
+    case 'abjarokubold':
+      return 'font-abjarokubold'
+    case 'abjgu':
+      return 'font-abjgu'
+    case 'abjchoki':
+      return 'font-abjchoki'
+    case 'abikkyu':
+      return 'font-abikkyu'
+    case 'abhouganm500':
+      return 'font-abhouganm500'
+    case 'abhiro':
+      return 'font-abhiro'
+    case 'abhierosregular':
+      return 'font-abhierosregular'
+    case 'abgagakum':
+      return 'font-abgagakum'
+    case 'abfudeshichi':
+      return 'font-abfudeshichi'
+    case 'abdoudoukaisyo':
+      return 'font-abdoudoukaisyo'
+    case 'abclipmedium':
+      return 'font-abclipmedium'
+    case 'abcircle':
+      return 'font-abcircle'
+    case 'abanzu':
+      return 'font-abanzu'
+    case 'abandante':
+      return 'font-abandante'
+    case 'ab24h':
+      return 'font-ab24h'
+    case 'hottenshokk':
+      return 'font-hottenshokk'
+    case 'hottenkoinkk':
+      return 'font-hottenkoinkk'
+    case 'hotsoshokk':
+      return 'font-hotsoshokk'
+    case 'hotkointaikk':
+      return 'font-hotkointaikk'
+    case 'hotkaishokk':
+      return 'font-hotkaishokk'
+    case 'hotgyoshokk':
+      return 'font-hotgyoshokk'
+    case 'hotgfkaishokk':
+      return 'font-hotgfkaishokk'
+    case 'hotgekai11kk':
+      return 'font-hotgekai11kk'
+    case 'kokuryu':
+      return 'font-kokuryu'
+    case 'shinryu':
+      return 'font-shinryu'
+    case 'dnpshueinminchostd':
+      return 'font-dnpshueinminchostd'
+    case 'dnpshueinshogominchostd':
+      return 'font-dnpshueinshogominchostd'
+    case 'tashizuku':
+      return 'font-tashizuku'
+    case 'tarehitsum':
+      return 'font-tarehitsum'
+    case 'tapoptomo':
+      return 'font-tapoptomo'
+    case 'tapopkaku':
+      return 'font-tapopkaku'
+    case 'taoonishi':
+      return 'font-taoonishi'
+    case 'takobe':
+      return 'font-takobe'
+    case 'tanasubi':
+      return 'font-tanasubi'
+    case 'tamiyabi':
+      return 'font-tamiyabi'
+    case 'abtsurara':
+      return 'font-abtsurara'
+    case 'abtoria':
+      return 'font-abtoria'
+    case 'abtombobold':
+      return 'font-abtombobold'
+    case 'abryushichi':
+      return 'font-abryushichi'
+    case 'abryusenaki':
+      return 'font-abryusenaki'
+    case 'abmegadot9':
+      return 'font-abmegadot9'
+    case 'abkinmokuseikuro':
+      return 'font-abkinmokuseikuro'
+    case 'abhanamaki':
+      return 'font-abhanamaki'
+    case 'abaotama':
+      return 'font-abaotama'
+    case 'abanzur':
+      return 'font-abanzur'
+    case 'abaki':
+      return 'font-abaki'
+    case 'tbudminchostd':
+      return 'font-tbudminchostd'
+    case 'tbudrgothicstd':
+      return 'font-tbudrgothicstd'
+    case 'tbudgothicstd':
+      return 'font-tbudgothicstd'
+    case 'aotfudshingocon80pr6n':
+      return 'font-aotfudshingocon80pr6n'
+    case 'aotfgothicmb101pr6n':
+      return 'font-aotfgothicmb101pr6n'
+    case 'yugothicpr6n':
+      return 'font-yugothicpr6n'
+    case 'uddigikyokashopro':
+      return 'font-uddigikyokashopro'
+    case 'setofontsp':
+      return 'font-setofontsp'
+    case 'oshidashimgothic':
+      return 'font-oshidashimgothic'
+    case 'oradanominchogsrr':
+      return 'font-oradanominchogsrr'
+    case 'timemachinewa':
+      return 'font-timemachinewa'
+    case 'kurobaracinderella':
+      return 'font-kurobaracinderella'
+    case 'rondeb':
+      return 'font-rondeb'
+    case 'poprumcute':
+      return 'font-poprumcute'
+    case 'mitimasu':
+      return 'font-mitimasu'
+    case 'kaisotai':
+      return 'font-kaisotai'
+    case 'isemin':
+      return 'font-isemin'
+    case 'isego':
+      return 'font-isego'
+    case 'genkaimincho':
+      return 'font-genkaimincho'
+    case 'honokamarugothic':
+      return 'font-honokamarugothic'
+    case 'honokaantiquemaru':
+      return 'font-honokaantiquemaru'
+    case 'fotudmarugosmallpr6n':
+      return 'font-fotudmarugosmallpr6n'
+    case 'fottsukuaoldminpr6n':
+      return 'font-fottsukuaoldminpr6n'
+    case 'fottsukuminpr6n':
+      return 'font-fottsukuminpr6n'
+    case 'fotudkakugosmallpr6n':
+      return 'font-fotudkakugosmallpr6n'
+    case 'fotudkakugoc80pro':
+      return 'font-fotudkakugoc80pro'
+    case 'fotudkakugoc70pro':
+      return 'font-fotudkakugoc70pro'
+    case 'fotudkakugoc60pro':
+      return 'font-fotudkakugoc60pro'
+    case 'fotchiarostd':
+      return 'font-fotchiarostd'
+    case 'fotudminchopr6n':
+      return 'font-fotudminchopr6n'
+    case 'bokutohrera':
+      return 'font-bokutohrera'
+    case 'abajiminkoheb':
+      return 'font-abajiminkoheb'
+    case 'wanpakurera':
+      return 'font-wanpakurera'
+    case 'nitalagoruika':
+      return 'font-nitalagoruika'
+    case 'nitalagorera':
+      return 'font-nitalagorera'
+    case 'septembern':
+      return 'font-septembern'
+    case 'capirera':
+      return 'font-capirera'
+    case 'bokutohruika':
+      return 'font-bokutohruika'
+    case 'happyruika':
+      return 'font-happyruika'
+    case 'wanpakuruika':
+      return 'font-wanpakuruika'
+    case 'ruika':
+      return 'font-ruika'
+    case 'rera':
+      return 'font-rera'
+    case 'abyoshienoryokandb':
+      return 'font-abyoshienoryokandb'
+    case 'abyoshienoryokanm':
+      return 'font-abyoshienoryokanm'
+    case 'abyoshienoryokanb':
+      return 'font-abyoshienoryokanb'
+    case 'abajiminsyuleb':
+      return 'font-abajiminsyuleb'
+    case 'absekka':
+      return 'font-absekka'
+    case 'abajiminsyuveb':
+      return 'font-abajiminsyuveb'
+    case 'abtyuusyobokunenn':
+      return 'font-abtyuusyobokunenn'
+    case 'abajiminmchikuceb':
+      return 'font-abajiminmchikuceb'
+    case 'abpolcadot':
+      return 'font-abpolcadot'
+    case 'abajiminmsyueb':
+      return 'font-abajiminmsyueb'
+    case 'abajiminmmineb':
+      return 'font-abajiminmmineb'
+    case 'abtsurumaru':
+      return 'font-abtsurumaru'
+    case 'abajiminmsyuleb':
+      return 'font-abajiminmsyuleb'
+    case 'abtanteidan':
+      return 'font-abtanteidan'
+    case 'abajiminmsyuveb':
+      return 'font-abajiminmsyuveb'
+    case 'abyurumin':
+      return 'font-abyurumin'
+    case 'abajiminmryoeb':
+      return 'font-abajiminmryoeb'
+    case 'abshiguma':
+      return 'font-abshiguma'
+    case 'abajiminsoeb':
+      return 'font-abajiminsoeb'
+    case 'abryusenfuyu':
+      return 'font-abryusenfuyu'
+    case 'abajiminmkoheb':
+      return 'font-abajiminmkoheb'
+    case 'absanpobito':
+      return 'font-absanpobito'
+    case 'abajiminmgyoeb':
+      return 'font-abajiminmgyoeb'
+    case 'abneuron':
+      return 'font-abneuron'
+    case 'abajiminmsoeb':
+      return 'font-abajiminmsoeb'
+    case 'abajiminryoeb':
+      return 'font-abajiminryoeb'
+    case 'abajimingyoeb':
+      return 'font-abajimingyoeb'
+    case 'abajiminmchikueb':
+      return 'font-abajiminmchikueb'
+    case 'abshoutenmaru':
+      return 'font-abshoutenmaru'
+    case 'abajiminsyueb':
+      return 'font-abajiminsyueb'
+    case 'abroman':
+      return 'font-abroman'
+    case 'abajiminmineb':
+      return 'font-abajiminmineb'
+    case 'abajiminchikueb':
+      return 'font-abajiminchikueb'
+    case 'abajiminchikuceb':
+      return 'font-abajiminchikuceb'
+    case 'abkotodamau':
+      return 'font-abkotodamau'
+    case 'tafugafude':
+      return 'font-tafugafude'
+    case 'abitaikoku':
+      return 'font-abitaikoku'
+    case 'tayugemeijin':
+      return 'font-tayugemeijin'
+    case 'abhasefude':
+      return 'font-abhasefude'
+    case 'takoigokoro':
+      return 'font-takoigokoro'
+    case 'abmayuminwalk':
+      return 'font-abmayuminwalk'
+    case 'abkotatsu':
+      return 'font-abkotatsu'
+    case 'tayuka':
+      return 'font-tayuka'
+    case 'abnara':
+      return 'font-abnara'
+    case 'takasanemarugo':
+      return 'font-takasanemarugo'
+    case 'abquadra':
+      return 'font-abquadra'
+    case 'taengeifude':
+      return 'font-taengeifude'
+    case 'abkokorono2':
+      return 'font-abkokorono2'
+    case 'tamadam':
+      return 'font-tamadam'
+    case 'tasouiimei':
+      return 'font-tasouiimei'
+    case 'takakushadow':
+      return 'font-takakushadow'
+    case 'taaki':
+      return 'font-taaki'
+    case 'abmarusan':
+      return 'font-abmarusan'
+    case 'tadansyaku':
+      return 'font-tadansyaku'
+    case 'abomusubi':
+      return 'font-abomusubi'
+    case 'abhasemomor':
+      return 'font-abhasemomor'
+    case 'abkirigirisu':
+      return 'font-abkirigirisu'
+    case 'abkotsubu':
+      return 'font-abkotsubu'
+    case 'abcountryroad':
+      return 'font-abcountryroad'
+    case 'absuzume':
+      return 'font-absuzume'
+    case 'abkirakul':
+      return 'font-abkirakul'
+    case 'abplus':
+      return 'font-abplus'
+    case 'abdonmai':
+      return 'font-abdonmai'
+    case 'abkumikib':
+      return 'font-abkumikib'
+    case 'abgagakub':
+      return 'font-abgagakub'
+    case 'abkikori':
+      return 'font-abkikori'
+    case 'abbooing':
+      return 'font-abbooing'
+    case 'abkesera':
+      return 'font-abkesera'
+    case 'abbabywalk':
+      return 'font-abbabywalk'
+    case 'abdigicomb':
+      return 'font-abdigicomb'
+    case 'abintore':
+      return 'font-abintore'
+    case 'abkarutabold':
+      return 'font-abkarutabold'
+    case 'abdoramin':
+      return 'font-abdoramin'
+    case 'vdlkuromincho':
+      return 'font-vdlkuromincho'
+    case 'vdlpenletter':
+      return 'font-vdlpenletter'
+    case 'vdlgothicmincho':
+      return 'font-vdlgothicmincho'
+    case 'yamamotoanstdn':
+      return 'font-yamamotoanstdn'
+    case 'yamamotoanclassicstdn':
+      return 'font-yamamotoanclassicstdn'
+    case 'kinutamaruminyoshinostdn':
+      return 'font-kinutamaruminyoshinostdn'
+    case 'kinutamarumintikumastdn':
+      return 'font-kinutamarumintikumastdn'
+    case 'kinutamaruminshinanostdn':
+      return 'font-kinutamaruminshinanostdn'
+    case 'kinutamaruminoldstdn':
+      return 'font-kinutamaruminoldstdn'
+    case 'kinutamaruminkisostdn':
+      return 'font-kinutamaruminkisostdn'
+    case 'kinutamaruminkaturastdn':
+      return 'font-kinutamaruminkaturastdn'
+    case 'kinutamaruminfujistdn':
+      return 'font-kinutamaruminfujistdn'
+    case 'iroha32sakurastdn':
+      return 'font-iroha32sakurastdn'
+    case 'iroha31nirestdn':
+      return 'font-iroha31nirestdn'
+    case 'iroha30momijistdn':
+      return 'font-iroha30momijistdn'
+    case 'iroha29umestdn':
+      return 'font-iroha29umestdn'
+    case 'iroha28kiristdn':
+      return 'font-iroha28kiristdn'
+    case 'iroha27keyakistdn':
+      return 'font-iroha27keyakistdn'
+    case 'iroha26tubakistdn':
+      return 'font-iroha26tubakistdn'
+    case 'iroha25ichostdn':
+      return 'font-iroha25ichostdn'
+    case 'iroha24matustdn':
+      return 'font-iroha24matustdn'
+    case 'iroha23kaedestdn':
+      return 'font-iroha23kaedestdn'
+    case 'iroha22momistdn':
+      return 'font-iroha22momistdn'
+    case 'iroha21popurastdn':
+      return 'font-iroha21popurastdn'
+    case 'toppanbunkyuminchopr6n':
+      return 'font-toppanbunkyuminchopr6n'
+    case 'toppanbunkyumidashiminst':
+      return 'font-toppanbunkyumidashiminst'
+    case 'toppanbunkyumidashigostd':
+      return 'font-toppanbunkyumidashigostd'
+    case 'tarb':
+      return 'font-tarb'
+    case 'takouran':
+      return 'font-takouran'
+    case 'takotodamar':
+      return 'font-takotodamar'
+    case 'takairegular':
+      return 'font-takairegular'
+    case 'tahougank500':
+      return 'font-tahougank500'
+    case 'tahoudatem500':
+      return 'font-tahoudatem500'
+    case 'taf1blockline':
+      return 'font-taf1blockline'
+    case 'tacandy':
+      return 'font-tacandy'
+    case 'vdlyotag':
+      return 'font-vdlyotag'
+    case 'vdlterag':
+      return 'font-vdlterag'
+    case 'vdlpetag':
+      return 'font-vdlpetag'
+    case 'vdlpenlady':
+      return 'font-vdlpenlady'
+    case 'vdlpengentle':
+      return 'font-vdlpengentle'
+    case 'vdlmegamaru':
+      return 'font-vdlmegamaru'
+    case 'vdlmegag':
+      return 'font-vdlmegag'
+    case 'vdllogona':
+      return 'font-vdllogona'
+    case 'vdllogojrblack':
+      return 'font-vdllogojrblack'
+    case 'vdllogomaru':
+      return 'font-vdllogomaru'
+    case 'vdllogomarujr':
+      return 'font-vdllogomarujr'
+    case 'vdlgigamaru':
+      return 'font-vdlgigamaru'
+    case 'vdllogojr':
+      return 'font-vdllogojr'
+    case 'vdllogog':
+      return 'font-vdllogog'
+    case 'vdllinegr':
+      return 'font-vdllinegr'
+    case 'vdllineg':
+      return 'font-vdllineg'
+    case 'vdlkyosensya':
+      return 'font-vdlkyosensya'
+    case 'vdlgigamarujr':
+      return 'font-vdlgigamarujr'
+    case 'vdlgigajr':
+      return 'font-vdlgigajr'
+    case 'vdlgigag':
+      return 'font-vdlgigag'
+    case 'vdladmin':
+      return 'font-vdladmin'
+    case 'fotseuratpron':
+      return 'font-fotseuratpron'
+    case 'fotrodinpron':
+      return 'font-fotrodinpron'
+    case 'fotmatissepron':
+      return 'font-fotmatissepron'
+    case 'fotcezannepron':
+      return 'font-fotcezannepron'
+    case 'yuminchopr6n':
+      return 'font-yuminchopr6n'
+    case 'dnpshueiantistd':
+      return 'font-dnpshueiantistd'
+    case 'dnpshuei4gobstd':
+      return 'font-dnpshuei4gobstd'
+    case 'dnpshuei4gostd':
+      return 'font-dnpshuei4gostd'
+    case 'dnpshueishogominchostd':
+      return 'font-dnpshueishogominchostd'
+    case 'heiseikakugothicstdn':
+      return 'font-heiseikakugothicstdn'
+    case 'heiseiminchostdn':
+      return 'font-heiseiminchostdn'
+    case 'kazurakisp2n':
+      return 'font-kazurakisp2n'
     default:
       return 'font-notosansjp'
   }
@@ -165,6 +694,8 @@ const Home: NextPage = ({}) => {
     fontNameJa: 'Noto Sans Japanese',
     fontNameEn: 'Noto Sans Japanese',
     fontWeight: 400,
+    type: 'google',
+    adobeId: '',
     score: 1.0,
   })
   const [errorOcr, setErrorOcr] = useState(false)
@@ -223,6 +754,8 @@ const Home: NextPage = ({}) => {
       .getCroppedCanvas()
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
+
+    // console.log(encodedImage)
 
     const fontSearchHeaders = new Headers()
     fontSearchHeaders.append('Content-Type', 'application/json')
@@ -291,6 +824,7 @@ const Home: NextPage = ({}) => {
           setErrorVfr(true)
         } else {
           setFonts(data[0].fonts)
+          setDoneAdobeFontLoading(false)
           setErrorVfr(false)
           setTimeoutVfr(false)
         }
@@ -319,19 +853,20 @@ const Home: NextPage = ({}) => {
         setLoading(false)
       })
   }
+
   if (typeof document !== 'undefined') {
     const target = document.getElementsByTagName('html')[0]
-    // document.getElementById
+    document.getElementById
 
     // オブザーバインスタンスを作成
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         const element = mutation.target as HTMLElement
-        console.log(
-          'observe',
-          element.classList.contains('wf-active'),
-          !element.classList.contains('wf-loading')
-        )
+        // console.log(
+        //   'observe',
+        //   element.classList.contains('wf-active'),
+        //   !element.classList.contains('wf-loading')
+        // )
         if (
           element.classList.contains('wf-active') &&
           !element.classList.contains('wf-loading')
@@ -352,6 +887,9 @@ const Home: NextPage = ({}) => {
   }
 
   console.log('adobe', doneAdobeFontsLoading)
+  console.log(Date.now())
+  console.log(fonts)
+  console.log(submitCount)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
@@ -359,24 +897,46 @@ const Home: NextPage = ({}) => {
         <title>フォントピント | 画像から日本語フォントを検索できるサイト</title>
       </Head>
 
-      {['csr3vpu', 'bqu5lpg', 'piq8klb', 'piq8klb', 'piq8klb'].map((kid) => (
-        <Script
-          dangerouslySetInnerHTML={{
-            __html: `
+      {Boolean(fonts) &&
+        !doneAdobeFontsLoading &&
+        fonts.map((font, index) => {
+          if (font.adobeId) {
+            return (
+              <Script
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: `
                 (function(d) {
                   var config = {
-                    kitId: '${kid}',
+                    kitId: '${font.adobeId}',
                     scriptTimeout: 3000,
                     async: true
                   },
                   h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)({active: function() {console.log("aa")}})}catch(e){}};s.parentNode.insertBefore(tk,s)
                 })(document);
                 `,
-          }}
-          strategy="afterInteractive"
-          // onLoad={() => setAdobeFontLoading(false)}
-        />
-      ))}
+                }}
+                strategy="afterInteractive"
+                // onLoad={() => setAdobeFontLoading(false)}
+              />
+            )
+          }
+        })}
+      {/* <Script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(d) {
+              var config = {
+                kitId: 'sif3cdm',
+                scriptTimeout: 3000,
+                async: true
+              },
+              h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+            })(document);
+                `,
+        }}
+        strategy="afterInteractive"
+      /> */}
 
       <main className="flex w-full flex-1 flex-col items-center px-8 pt-10 text-center">
         {!Boolean(image) && (
@@ -391,20 +951,6 @@ const Home: NextPage = ({}) => {
         <div className="mb-4">
           <ImageUploader onChange={onSelectFile} />
         </div>
-
-        <>
-          <p className="font-abwarakum text-2xl">
-            新しい時代のこころを映すタイプフェイスデザイン
-          </p>
-          <p className="font-yuminchopr6n text-2xl">
-            新しい時代のこころを映すタイプフェイスデザイン
-          </p>
-          <p className="font-vdlv7gothic text-2xl font-medium">
-            新しい時代のこころを映すタイプフェイスデザイン
-          </p>
-        </>
-
-        <div id="ado"></div>
 
         {Boolean(image) && (
           <Cropper
@@ -493,13 +1039,17 @@ const Home: NextPage = ({}) => {
               htmlFor={fontModalKey}
             >
               <div>
-                <p
-                  className={`mt-2 text-3xl md:text-5xl ${fontWeightClassName(
-                    font.fontWeight
-                  )} ${fontClassName(font.fontName)}`}
-                >
-                  {displayText}
-                </p>
+                {font.type === 'adobe' && !doneAdobeFontsLoading ? (
+                  <FontLoading />
+                ) : (
+                  <p
+                    className={`mt-2 text-3xl md:text-5xl ${fontWeightClassName(
+                      font.fontWeight
+                    )} ${fontClassName(font.fontName)}`}
+                  >
+                    {displayText}
+                  </p>
+                )}
               </div>
               <div className="mt-2 flex justify-end md:mt-4">
                 <p className="text-md font-normal text-gray-400 md:text-lg">
