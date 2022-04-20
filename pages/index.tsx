@@ -687,7 +687,6 @@ const Home: NextPage = ({}) => {
   const [loading, setLoading] = useState(false)
   const [submitCount, setSubmitCount] = useState(0) // 送信されたときに useEffect走るように（countじゃくていいのだが…）
   const firstRender = useRef(true)
-  // const [showModal, setShowModal] = useState(false)
   const [croppedImage, setCroppedImage] = useState('')
   const [selectedFont, setSelectedFont] = useState<PredictFont>({
     fontName: 'notosansjp',
