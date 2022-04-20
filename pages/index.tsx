@@ -884,8 +884,6 @@ const Home: NextPage = ({}) => {
     observer.observe(target, config)
   }
 
-  console.log(loadAdobeFonts.current, loadAdobeFontsNum)
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
