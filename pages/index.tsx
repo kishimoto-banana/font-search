@@ -929,8 +929,14 @@ const Home: NextPage = ({}) => {
           </>
         )}
         <div className="mb-4">
-          <ImageUploader onChange={onSelectFile} />
+          <ImageUploader onChange={onSelectFile} hasImage={Boolean(image)} />
         </div>
+
+        {!Boolean(image) && (
+          <div className="balloon">
+            <p>対応フォント数365</p>
+          </div>
+        )}
 
         {Boolean(image) && (
           <Cropper
@@ -961,7 +967,7 @@ const Home: NextPage = ({}) => {
 
             <div>
               <button
-                className="btn mt-4"
+                className="btn btn-lg mt-4"
                 onClick={() => setSubmitCount(submitCount + 1)}
               >
                 検索
