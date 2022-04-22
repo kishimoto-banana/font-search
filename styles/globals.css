@@ -6,6 +6,44 @@
   overflow: hidden;
 }
 
+/* 吹き出し本体 */
+.balloon{
+  position: relative;
+  padding: 8px 10px;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 30px;
+}
+
+/* beforeで枠線の三角を表現 */
+.balloon::before{
+  content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: 30px;
+  top: -15px;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #000000;
+  border-left: 15px solid transparent;
+}
+
+/* beforeで本体の三角を表現 */
+.balloon::after{
+  content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: 30px;
+  top: -12px;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #ffffff;
+  border-left: 15px solid transparent;
+}
+
+
 @layer utilities {
   .animation-delay-100 {
     animation-delay: 0.1s;
