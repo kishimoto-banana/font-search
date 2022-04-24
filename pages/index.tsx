@@ -117,12 +117,12 @@ const fontClassName = (fontName: string) => {
       return 'font-zenkurenaido'
     case 'shipporiantique':
       return 'font-shipporiantique'
-    case 'morisawabizudgothic':
-      return 'font-morisawabizudgothic'
-    case 'morisawabizudmincho':
-      return 'font-morisawabizudmincho'
-    case 'morisawabizudpmincho':
-      return 'font-morisawabizudpmincho'
+    case 'bizudgothic':
+      return 'font-bizudgothic'
+    case 'bizudmincho':
+      return 'font-bizudmincho'
+    case 'bizudpmincho':
+      return 'font-bizudpmincho'
     case 'aotfjunpro':
       return 'font-aotfjunpro'
     case 'aotfudreiminpr6n':
@@ -861,10 +861,10 @@ const Home: NextPage = ({}) => {
         const element = mutation.target as HTMLElement
         element.classList.forEach((value) => {
           if (fontNamePattern.test(value.trim())) {
-            const fontFamily = value.split('-').slice(1, -2).join('')
+            const fontFamilyWithWeight = value.split('-').slice(1, -1).join('')
             const beforeNum = loadAdobeFonts.current.length
             loadAdobeFonts.current = Array.from(
-              new Set(loadAdobeFonts.current.concat([fontFamily]))
+              new Set(loadAdobeFonts.current.concat([fontFamilyWithWeight]))
             )
             if (beforeNum !== loadAdobeFonts.current.length) {
               setLoadAdobeFontsNum(loadAdobeFonts.current.length)
@@ -895,7 +895,9 @@ const Home: NextPage = ({}) => {
           // adobe fontsかつまだ読み込まれていないフォントをロード
           if (
             font.type === 'adobe' &&
-            !loadAdobeFonts.current.includes(font.fontName)
+            !loadAdobeFonts.current.includes(
+              `${font.fontName}n${(font.fontWeight / 100).toString()}`
+            )
           ) {
             return (
               <Script
@@ -910,6 +912,40 @@ const Home: NextPage = ({}) => {
                   },
                   h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)({active: function() {console.log("aa")}})}catch(e){}};s.parentNode.insertBefore(tk,s)
                 })(document);
+                `,
+                }}
+                strategy="afterInteractive"
+              />
+            )
+          }
+          // google fontsかつまだ読み込まれていないフォントをロード
+          if (
+            font.type === 'google' &&
+            !loadAdobeFonts.current.includes(
+              `${font.fontName}n${(font.fontWeight / 100).toString()}`
+            )
+          ) {
+            return (
+              <Script
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: `
+                  WebFontConfig = {
+                    google: {
+                      families: ['${
+                        font.fontNameEn
+                      }:${font.fontWeight.toString()}'],
+                      text: '${displayText}'
+                    },
+                    timeout: 3000
+                 };
+              
+                 (function(d) {
+                    var wf = d.createElement('script'), s = d.scripts[0];
+                    wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+                    wf.async = true;
+                    s.parentNode.insertBefore(wf, s);
+                 })(document);
                 `,
                 }}
                 strategy="afterInteractive"
@@ -1025,8 +1061,9 @@ const Home: NextPage = ({}) => {
               htmlFor={fontModalKey}
             >
               <div>
-                {font.type === 'adobe' &&
-                !loadAdobeFonts.current.includes(font.fontName) ? (
+                {!loadAdobeFonts.current.includes(
+                  `${font.fontName}n${(font.fontWeight / 100).toString()}`
+                ) ? (
                   <FontLoading />
                 ) : (
                   <p
