@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.img-preview {
-  overflow: hidden;
-}
 
 /* 吹き出し本体 */
 .balloon{
