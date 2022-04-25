@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Script from 'next/script'
 import React, { useEffect, useRef, useState } from 'react'
 import { Cropper } from 'react-cropper'
+import BuyMeACoffee from '../components/buymeacoffee'
 import ExampleModal from '../components/exampleModal'
 import FontLoading from '../components/fontLoading'
 import FontModal from '../components/fontModal'
@@ -1088,6 +1089,10 @@ const Home: NextPage = ({}) => {
 
         <div className="pt-16">
           <Share />
+        </div>
+
+        <div className="pt-6">
+          <BuyMeACoffee />
         </div>
 
         <FontModal
