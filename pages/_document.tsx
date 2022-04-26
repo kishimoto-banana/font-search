@@ -1,5 +1,4 @@
 import { Head, Html, Main, NextScript } from 'next/document'
-import { GoogleAnalytics } from '../lib/gtag'
 
 export default function Document() {
   return (
@@ -58,7 +57,6 @@ export default function Document() {
           name="description"
           content="画像中のテキストから似ている日本語フォントを検索します"
         />
-        <GoogleAnalytics />
       </Head>
       <body>
         <Main />
