@@ -10,6 +10,7 @@ import ExampleModal from '../components/exampleModal'
 import FontLoading from '../components/fontLoading'
 import FontModal from '../components/fontModal'
 import Footer from '../components/Footer'
+import GoogleAnalytics from '../components/gtag'
 import ImageUploader from '../components/imageUploader'
 import Loading from '../components/loading'
 import Share from '../components/share'
@@ -890,6 +891,8 @@ const Home: NextPage = ({}) => {
       <Head>
         <title>フォントピント | 画像から日本語フォントを検索できるサイト</title>
       </Head>
+
+      <GoogleAnalytics />
 
       {Boolean(fonts) &&
         fonts.map((font, index) => {

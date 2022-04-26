@@ -1,16 +1,18 @@
+import Script from 'next/script'
+
 const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''
 const existsGaId = GA_ID !== ''
 
-export const GoogleAnalytics = () => {
+const GoogleAnalytics = () => {
   return (
     <>
       {existsGaId && (
         <>
-          <script
-            async
+          <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
           />
-          <script
+          <Script
             dangerouslySetInnerHTML={{
               __html: `
                   window.dataLayer = window.dataLayer || [];
@@ -20,9 +22,12 @@ export const GoogleAnalytics = () => {
                     page_path: window.location.pathname,
                   });`,
             }}
+            strategy="afterInteractive"
           />
         </>
       )}
     </>
   )
 }
+
+export default GoogleAnalytics
