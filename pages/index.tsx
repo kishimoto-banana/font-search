@@ -17,8 +17,6 @@ import Share from '../components/share'
 import niwatori from '../public/niwatori.jpeg'
 
 const fontSearchApiEndpoint = process.env.NEXT_PUBLIC_FONT_SEARCH_API_ENDPOINT
-const visionApiEndpoint = `${process.env.NEXT_PUBLIC_VISION_API_ENDPOINT}?key=${process.env.NEXT_PUBLIC_VISION_API_KEY}`
-
 const title = 'フォントピント（β）'
 const maxChars = 25
 const abortTime = 15000
@@ -745,7 +743,7 @@ const Home: NextPage = ({}) => {
     }
   }
 
-  const getCropData = () => {
+  const getCropData = async () => {
     // console.log(cropper.getCroppedCanvas().toDataURL())
     // typeは検討
     // https://developer.mozilla.org/ja/docs/Web/API/HTMLCanvasElement/toDataURL
@@ -778,79 +776,47 @@ const Home: NextPage = ({}) => {
       ],
     })
 
-    const fetchParams = [
-      {
-        endpoint: fontSearchApiEndpoint,
-        method: 'POST',
-        headers: fontSearchHeaders,
-        body: fontSearchBody,
-      },
-      {
-        endpoint: visionApiEndpoint,
-        method: 'POST',
-        headers: ocrHeaders,
-        body: ocrBody,
-      },
-    ]
-
     const controller = new AbortController()
     const timeout = setTimeout(() => {
       controller.abort()
     }, abortTime)
 
-    Promise.all(
-      fetchParams.map((param) =>
-        fetch(param.endpoint, {
-          method: param.method,
-          headers: param.headers,
-          body: param.body,
-          signal: controller.signal,
-        }).catch((err) => err)
-      )
-    )
-      .then((responses) => {
-        return Promise.all(
-          responses.map((res) =>
-            res instanceof Error ? res : res.json().catch((err: any) => err)
-          )
-        )
+    try {
+      const response = await fetch(fontSearchApiEndpoint, {
+        method: 'POST',
+        headers: fontSearchHeaders,
+        body: fontSearchBody,
+        signal: controller.signal,
       })
-      .then((data) => {
-        // フォント認識
-        if ('error' in data[0] || data[0] instanceof Error) {
-          if (data[0].name === 'AbortError') {
-            setTimeoutVfr(true)
-          }
-          setErrorVfr(true)
-        } else {
-          setFonts(data[0].fonts)
-          setErrorVfr(false)
-          setTimeoutVfr(false)
-        }
 
-        // ocr
-        if ('error' in data[1] || data[1] instanceof Error) {
-          setErrorOcr(true)
-          return
-        }
-        if ('fullTextAnnotation' in data[1].responses[0]) {
-          const detectedText =
-            data[1].responses[0].fullTextAnnotation.text.replace(/\r?\n/g, '')
-          const slicedText =
-            detectedText.length <= maxChars
-              ? detectedText
-              : detectedText.slice(0, maxChars)
-          setText(slicedText)
-          setErrorOcr(false)
-          return
-        }
-        setText('')
+      if (response.ok) {
+        const data = await response.json()
+        setFonts(data.fonts)
+
+        const detectedText = data.text
+        const slicedText =
+          detectedText.length <= maxChars
+            ? detectedText
+            : detectedText.slice(0, maxChars)
+        setText(slicedText)
+        setErrorVfr(false)
         setErrorOcr(false)
-      })
-      .finally(() => {
-        clearTimeout(timeout)
-        setLoading(false)
-      })
+        setTimeoutVfr(false)
+        // 400番台
+        // 基本OCRのエラー
+      } else {
+        setErrorOcr(true)
+      }
+      // 500番台
+    } catch (e) {
+      if (e instanceof Error && e.name == 'AbortError') {
+        setTimeoutVfr(true)
+      }
+      setErrorVfr(true)
+    } finally {
+      clearTimeout(timeout)
+      setLoading(false)
+    }
   }
 
   const fontNamePattern = /^wf-.+-active$/
@@ -1016,18 +982,6 @@ const Home: NextPage = ({}) => {
           </>
         )}
 
-        {!loading && !errorVfr && errorOcr && (
-          <div className="pt-4">
-            <Image
-              src={niwatori}
-              width={100}
-              height={100}
-              objectFit="contain"
-            />
-            <p className="text-lg font-bold">文字を認識できていません</p>
-          </div>
-        )}
-
         {loading ? (
           <Loading />
         ) : errorVfr ? (
@@ -1055,6 +1009,16 @@ const Home: NextPage = ({}) => {
               <p className="text-lg font-bold">現在動いていません</p>
             </div>
           )
+        ) : errorOcr ? (
+          <div className="pt-4">
+            <Image
+              src={niwatori}
+              width={100}
+              height={100}
+              objectFit="contain"
+            />
+            <p className="text-lg font-bold">文字を認識できませんでした</p>
+          </div>
         ) : (
           Boolean(fonts) &&
           fonts.map((font, index) => (
