@@ -755,6 +755,8 @@ const Home: NextPage = ({}) => {
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
 
+    console.log(encodedImage)
+
     const fontSearchHeaders = new Headers()
     fontSearchHeaders.append('Content-Type', 'application/json')
     fontSearchHeaders.append(
@@ -1018,6 +1020,9 @@ const Home: NextPage = ({}) => {
               objectFit="contain"
             />
             <p className="text-lg font-bold">文字を認識できませんでした</p>
+            <p className="text-lg font-bold">
+              （トリミングの範囲を大きくすると上手くいく場合があります）
+            </p>
           </div>
         ) : (
           Boolean(fonts) &&
