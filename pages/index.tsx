@@ -755,8 +755,6 @@ const Home: NextPage = ({}) => {
       .toDataURL()
       .replace(/^data:image\/(png|jpg);base64,/, '')
 
-    console.log(encodedImage)
-
     const fontSearchHeaders = new Headers()
     fontSearchHeaders.append('Content-Type', 'application/json')
     fontSearchHeaders.append(
@@ -1008,7 +1006,7 @@ const Home: NextPage = ({}) => {
                 height={100}
                 objectFit="contain"
               />
-              <p className="text-lg font-bold">現在動いていません</p>
+              <p className="text-lg font-bold">何かエラー起きちゃいました</p>
             </div>
           )
         ) : errorOcr ? (
