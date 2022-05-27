@@ -17,9 +17,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const SharePage: React.FC<Props> = ({ id }) => {
   const router = useRouter()
 
-  // useEffect(() => {
-  //   router.replace('/')
-  // }, [])
+  useEffect(() => {
+    router.replace('/')
+  }, [])
 
   return (
     <Head>
