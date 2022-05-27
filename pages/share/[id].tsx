@@ -32,22 +32,18 @@ const SharePage: React.FC<Props> = ({ id }) => {
         content="画像中のテキストから似ている日本語フォントを検索します。"
       />
       <meta property="og:type" content="website" />
-      <meta
-        property="og:url"
-        content="https://font-search-git-staging-kishimoto-banana.vercel.app/share/adsss"
-      />
+      <meta property="og:url" content="https://fontpint.com" />
       <meta
         property="og:image"
         content="https://d173y4sbgdpniu.cloudfront.net/default/aries.png"
+        key="og_image"
       />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta
-        name="twitter:site"
-        content="https://font-search-git-staging-kishimoto-banana.vercel.app/share/adsss"
-      />
+      <meta name="twitter:site" content="https://fontpint.com" />
       <meta
         name="twitter:image"
         content="https://d173y4sbgdpniu.cloudfront.net/default/aries.png"
+        key="og_twitter_image"
       />
     </Head>
   )
