@@ -47,12 +47,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta
           property="og:image"
           content="https://fontpint.com/favicons/ogp.png"
+          key="og_image"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="https://fontpint.com" />
         <meta
           name="twitter:image"
           content="https://fontpint.com/favicons/ogp.png"
+          key="og_twitter_image"
         />
         <meta name="keywords" content="フォント,検索,日本語フォント,画像" />
         <meta
