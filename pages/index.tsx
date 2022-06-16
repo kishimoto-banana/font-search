@@ -806,6 +806,7 @@ const Home: NextPage = ({}) => {
         // 基本OCRのエラー
       } else {
         setErrorOcr(true)
+        throw new Error('OCR Error')
       }
       // 500番台
     } catch (e) {
@@ -813,6 +814,7 @@ const Home: NextPage = ({}) => {
         setTimeoutVfr(true)
       }
       setErrorVfr(true)
+      throw new Error('VFR Error')
     } finally {
       clearTimeout(timeout)
       setLoading(false)
